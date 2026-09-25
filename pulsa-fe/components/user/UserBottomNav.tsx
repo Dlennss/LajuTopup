@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { History, House, UserRound, WalletCards } from "lucide-react";
+import { Grid2X2, History, House, UserRound, WalletCards } from "lucide-react";
 
 function navClass(active: boolean) {
   return active
-    ? "flex min-w-0 flex-col items-center gap-1.5 py-1 text-[#bc4227]! visited:text-[#bc4227]!"
-    : "flex min-w-0 flex-col items-center gap-1.5 py-1 text-slate-400! transition visited:text-slate-400! hover:text-[#612f27]!";
+    ? "flex min-w-0 flex-col items-center gap-1.5 py-1 text-[#ef1d2b]! visited:text-[#ef1d2b]!"
+    : "flex min-w-0 flex-col items-center gap-1.5 py-1 text-slate-500! transition visited:text-slate-500! hover:text-[#ef1d2b]!";
 }
 
 function isActivePath(pathname: string, basePath: string) {
@@ -20,13 +20,14 @@ const textClass = "text-[11px] font-bold leading-none";
 export function UserBottomNav() {
   const pathname = usePathname() || "";
   const trxActive = isActivePath(pathname, "/user/transaksi");
+  const layananActive = isActivePath(pathname, "/user/kategori") || isActivePath(pathname, "/user/pulsa") || isActivePath(pathname, "/user/paket-data") || isActivePath(pathname, "/user/ewallet") || isActivePath(pathname, "/user/listrik");
   const saldoActive = isActivePath(pathname, "/user/saldo") || isActivePath(pathname, "/user/account/topup") || isActivePath(pathname, "/user/account/mutasi");
   const accountActive = isActivePath(pathname, "/user/account") && !saldoActive;
-  const homeActive = isActivePath(pathname, "/user") && !trxActive && !accountActive && !saldoActive;
+  const homeActive = isActivePath(pathname, "/user") && !trxActive && !layananActive && !accountActive && !saldoActive;
 
   return (
-    <section className="brand-bottom-nav fixed bottom-0 left-1/2 z-[90] w-full max-w-md -translate-x-1/2 overflow-hidden rounded-t-[24px] border-t border-[#612f27]/10 bg-white/96 shadow-[0_-14px_34px_rgba(6,78,59,0.10)] backdrop-blur-xl md:bottom-0 md:w-97.5 md:max-w-none">
-      <div className="grid grid-cols-4 px-4 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2.5">
+    <section className="brand-bottom-nav fixed bottom-0 left-1/2 z-[90] w-full max-w-md -translate-x-1/2 rounded-t-[28px] bg-white/98 shadow-[0_-14px_34px_rgba(42,26,23,0.12)] ring-1 ring-slate-950/[0.04] backdrop-blur-xl md:bottom-4 md:w-97.5 md:max-w-none md:rounded-[28px]">
+      <div className="grid grid-cols-5 items-end px-4 pb-[calc(0.8rem+env(safe-area-inset-bottom))] pt-3">
         <Link href="/user" className={navClass(homeActive)}>
           <House className={iconClass} strokeWidth={1.65} />
           <span className={textClass}>Beranda</span>
@@ -35,6 +36,16 @@ export function UserBottomNav() {
         <Link href="/user/transaksi" className={navClass(trxActive)}>
           <History className={iconClass} strokeWidth={1.65} />
           <span className={textClass}>Riwayat</span>
+        </Link>
+
+        <Link
+          href="/user/kategori"
+          className="relative -mt-8 flex min-w-0 flex-col items-center gap-1 text-slate-500! visited:text-slate-500!"
+        >
+          <span className="grid h-[64px] w-[64px] place-items-center rounded-full bg-linear-to-br from-[#ff6a25] to-[#df1f27] text-white shadow-[0_14px_30px_rgba(221,38,32,0.32)] ring-[6px] ring-white">
+            <Grid2X2 className="h-7 w-7" fill="currentColor" strokeWidth={2} />
+          </span>
+          <span className={layananActive ? "text-[11px] font-bold leading-none text-[#ef1d2b]" : textClass}>Layanan</span>
         </Link>
 
         <Link href="/user/saldo" className={navClass(saldoActive)}>
