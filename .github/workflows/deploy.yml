@@ -1,9 +1,13 @@
 name: Deploy
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - CI
     branches:
       - main
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
@@ -17,9 +21,11 @@ jobs:
   deploy:
     name: Build and Deploy to Server
     runs-on: ubuntu-24.04-arm
-    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 75
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
       SERVER_HOST: ${{ secrets.SERVER_HOST }}
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
       SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -31,6 +37,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_SHA }}
 
       - name: Validate deployment secrets
         shell: bash
@@ -85,6 +93,7 @@ jobs:
 
       - name: Build frontend standalone
         env:
+          NEXT_TELEMETRY_DISABLED: "1"
           NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED: "false"
           NEXT_PUBLIC_SITE_URL: https://lajutopup.com
           NEXTAUTH_URL: https://lajutopup.com
@@ -94,7 +103,6 @@ jobs:
           set -euo pipefail
           cd "$FRONTEND_SOURCE_DIR"
           npm ci
-          npm run lint
           npm run build
           cd ..
           rm -rf deploy/frontend
@@ -102,8 +110,8 @@ jobs:
           cp -R "$FRONTEND_SOURCE_DIR/.next/standalone/." deploy/frontend/
           cp -R "$FRONTEND_SOURCE_DIR/.next/static" deploy/frontend/.next/static
           cp -R "$FRONTEND_SOURCE_DIR/public" deploy/frontend/public
-          printf '%s\n' "$GITHUB_SHA" > deploy/frontend/DEPLOY_COMMIT
-          printf '%s\n' "$GITHUB_SHA" > deploy/frontend/public/deploy-version.txt
+          printf '%s\n' "$RELEASE_SHA" > deploy/frontend/DEPLOY_COMMIT
+          printf '%s\n' "$RELEASE_SHA" > deploy/frontend/public/deploy-version.txt
 
       - name: Install SSH tools
         shell: bash
@@ -145,8 +153,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          actual=$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "https://lajutopup.com/deploy-version.txt?commit=${GITHUB_SHA}")
-          test "$actual" = "$GITHUB_SHA"
+          actual=$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "https://lajutopup.com/deploy-version.txt?commit=${RELEASE_SHA}")
+          test "$actual" = "$RELEASE_SHA"
 
       - name: Remove temporary SSH key
         if: always()
