@@ -86,11 +86,11 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
 
   return (
     <main className="min-h-svh bg-[#f6f4f3] pb-28 text-slate-950">
-      <section className="mt-4 px-4">
-        <div className="relative z-10 overflow-hidden rounded-[22px] bg-white p-3.5 shadow-[0_18px_38px_rgba(80,39,35,0.13)] ring-1 ring-slate-950/[0.04]">
-          <div className="grid grid-cols-[minmax(0,1fr)_92px] gap-2.5 min-[390px]:grid-cols-[minmax(0,1fr)_102px] min-[390px]:gap-3">
-            <Link href={saldoHref} prefetch={false} className="flex min-w-0 items-center gap-3">
-              <div className="relative grid h-[58px] w-[58px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[#fff1ed] min-[390px]:h-[64px] min-[390px]:w-[64px]">
+      <section className="mt-5 px-4">
+        <div className="relative rounded-[22px] bg-white p-3.5 shadow-[0_18px_38px_rgba(80,39,35,0.13)] ring-1 ring-slate-950/[0.04]">
+          <div className="grid min-h-[104px] grid-cols-[minmax(0,1fr)_88px] items-center gap-2.5 min-[360px]:grid-cols-[minmax(0,1fr)_106px] min-[390px]:gap-3">
+            <Link href={saldoHref} prefetch={false} className="flex min-w-0 items-center gap-2.5 min-[390px]:gap-3">
+              <div className="relative grid h-[54px] w-[54px] shrink-0 place-items-center overflow-hidden rounded-[17px] bg-[#fff1ed] min-[390px]:h-[64px] min-[390px]:w-[64px] min-[390px]:rounded-[18px]">
                 <Image
                   src={`${assetBase}/02_balance_card/saldo_icon.png`}
                   alt=""
@@ -102,7 +102,7 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               </div>
               <div className="min-w-0">
                 <p className="text-[12px] font-semibold text-slate-500 min-[390px]:text-[13px]">Saldo Utama</p>
-                <p className="mt-1 whitespace-nowrap text-[23px] font-black leading-none tracking-tight text-slate-950 min-[390px]:text-[26px]">
+                <p className="mt-1 truncate text-[20px] font-black leading-none tracking-tight text-slate-950 min-[390px]:text-[26px]">
                   {formatRupiah(saldo)}
                 </p>
                 <p className="mt-1.5 truncate text-[11px] font-medium text-slate-500 min-[390px]:text-[12px]">
@@ -116,18 +116,18 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               <Link
                 href={topupHref}
                 prefetch={false}
-                className="inline-flex h-[48px] items-center justify-center gap-1 rounded-[14px] bg-linear-to-br from-[#ff512b] to-[#c91821] text-[12px] font-black text-white shadow-[0_12px_22px_rgba(216,42,28,0.24)] min-[390px]:h-[52px] min-[390px]:gap-1.5 min-[390px]:text-[14px]"
+                className="inline-flex h-[46px] min-w-0 items-center justify-center gap-1 rounded-[14px] bg-linear-to-br from-[#ff512b] to-[#c91821] text-[12px] font-black text-white shadow-[0_12px_22px_rgba(216,42,28,0.24)] min-[390px]:h-[52px] min-[390px]:gap-1.5 min-[390px]:text-[14px]"
               >
-                <Plus className="h-5 w-5" strokeWidth={2.3} />
-                <span className="whitespace-nowrap">Isi Saldo</span>
+                <Plus className="h-4.5 w-4.5 shrink-0 min-[390px]:h-5 min-[390px]:w-5" strokeWidth={2.3} />
+                <span className="truncate">Isi Saldo</span>
               </Link>
               <Link
                 href={sendHref}
                 prefetch={false}
-                className="inline-flex h-[42px] items-center justify-center gap-1.5 rounded-[14px] border border-[#efb5af] bg-[#fff5f3] text-[12px] font-black text-[#bd1e24] min-[390px]:h-[46px] min-[390px]:text-[14px]"
+                className="inline-flex h-[40px] min-w-0 items-center justify-center gap-1 rounded-[14px] border border-[#efb5af] bg-[#fff5f3] text-[12px] font-black text-[#bd1e24] min-[390px]:h-[46px] min-[390px]:gap-1.5 min-[390px]:text-[14px]"
               >
-                <Send className="h-4.5 w-4.5 fill-[#bd1e24]/10" strokeWidth={2.4} />
-                Kirim
+                <Send className="h-4 w-4 shrink-0 fill-[#bd1e24]/10 min-[390px]:h-4.5 min-[390px]:w-4.5" strokeWidth={2.4} />
+                <span className="truncate">Kirim</span>
               </Link>
             </div>
           </div>
