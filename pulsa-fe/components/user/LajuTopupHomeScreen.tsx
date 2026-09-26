@@ -153,7 +153,7 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
 
       <section className="mt-4 px-4">
         <div className="rounded-[22px] bg-white px-3 py-4 shadow-[0_14px_30px_rgba(42,26,23,0.08)] ring-1 ring-slate-950/[0.04]">
-          <div className="grid grid-cols-4 gap-x-2 gap-y-5 min-[380px]:grid-cols-6">
+          <div className="grid grid-cols-4 gap-x-2 gap-y-4 min-[360px]:grid-cols-6 min-[390px]:gap-x-2.5 min-[390px]:gap-y-4">
             {services.map((service) => (
               <Link
                 key={service.label}
@@ -161,16 +161,16 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
                 prefetch={false}
                 className="group flex min-w-0 flex-col items-center gap-2 text-center"
               >
-                <span className="relative h-[54px] w-[54px] shrink-0 overflow-hidden rounded-[16px] transition group-hover:-translate-y-0.5 min-[380px]:h-[58px] min-[380px]:w-[58px]">
+                <span className="relative h-[48px] w-[48px] shrink-0 overflow-hidden rounded-[15px] bg-white shadow-[0_8px_18px_rgba(35,25,22,0.08)] ring-1 ring-slate-950/[0.04] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(216,42,28,0.14)] min-[390px]:h-[50px] min-[390px]:w-[50px]">
                   <Image
                     src={service.icon}
                     alt=""
                     fill
-                    sizes="58px"
-                    className="object-cover"
+                    sizes="50px"
+                    className="object-contain"
                   />
                 </span>
-                <span className="max-w-[64px] text-[12px] font-semibold leading-tight text-slate-950">
+                <span className="max-w-[54px] text-[11px] font-bold leading-tight text-slate-950 min-[390px]:text-[11.5px]">
                   {service.label}
                 </span>
               </Link>
