@@ -138,14 +138,14 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
         <Link
           href={catalogHref}
           prefetch={false}
-          className="relative block aspect-[953/242] overflow-hidden rounded-[18px] shadow-[0_18px_34px_rgba(147,36,24,0.18)]"
+          className="relative block aspect-[953/292] overflow-hidden rounded-[18px] bg-[#bd1722] shadow-[0_18px_34px_rgba(147,36,24,0.18)] ring-1 ring-white/50"
         >
           <Image
             src={`${assetBase}/03_banner/hero_banner_full.png`}
             alt="Semua kebutuhan dalam satu aplikasi LajuTopup"
             fill
             sizes="(max-width: 768px) 100vw, 390px"
-            className="object-cover"
+            className="object-fill"
             priority
           />
         </Link>
