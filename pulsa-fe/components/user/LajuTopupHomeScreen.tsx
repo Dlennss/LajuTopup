@@ -1,12 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  BarChart3,
   ChevronRight,
   Clock3,
+  Droplets,
   Flame,
+  Gamepad2,
+  Grid2X2,
+  Headphones,
+  Lightbulb,
+  MessageCircle,
   Plus,
+  ReceiptText,
   Send,
+  Smartphone,
+  Tv,
+  WalletCards,
+  Wifi,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { UserProfile, UserSession } from "@/components/user/types";
 
 type LajuTopupHomeScreenProps = {
@@ -17,19 +30,25 @@ type LajuTopupHomeScreenProps = {
 
 const assetBase = "/lajutopup-assets/LajuTopup_Assets_Pecah";
 
-const services = [
-  { key: "pulsa", label: "Pulsa", icon: `${assetBase}/05_service_icons/icon_pulsa.png` },
-  { key: "paket-data", label: "Paket Data", icon: `${assetBase}/05_service_icons/icon_paket_data.png` },
-  { key: "pln", label: "PLN", icon: `${assetBase}/05_service_icons/icon_pln.png` },
-  { key: "game", label: "Game", icon: `${assetBase}/05_service_icons/icon_game.png` },
-  { key: "ewallet", label: "E-Wallet", icon: `${assetBase}/05_service_icons/icon_ewallet.png` },
-  { key: "tagihan", label: "Tagihan", icon: `${assetBase}/05_service_icons/icon_tagihan.png` },
-  { key: "tv", label: "TV Digital", icon: `${assetBase}/05_service_icons/icon_tv.png` },
-  { key: "telkom", label: "Telkom", icon: `${assetBase}/05_service_icons/icon_telkom.png` },
-  { key: "pdam", label: "PDAM", icon: `${assetBase}/05_service_icons/icon_pdam.png` },
-  { key: "internet", label: "Internet", icon: `${assetBase}/05_service_icons/icon_internet.png` },
-  { key: "lainnya", label: "Lainnya", icon: `${assetBase}/05_service_icons/icon_lainnya.png` },
-  { key: "semua", label: "Semua", icon: `${assetBase}/05_service_icons/icon_semua.png` },
+const services: Array<{
+  key: string;
+  label: string;
+  Icon: LucideIcon;
+  bg: string;
+  color: string;
+}> = [
+  { key: "pulsa", label: "Pulsa", Icon: Smartphone, bg: "bg-[#ffe2e8]", color: "text-[#e81f4f]" },
+  { key: "paket-data", label: "Paket Data", Icon: BarChart3, bg: "bg-[#e3f3ff]", color: "text-[#2f7be8]" },
+  { key: "pln", label: "PLN", Icon: Lightbulb, bg: "bg-[#fff2c8]", color: "text-[#f59e0b]" },
+  { key: "game", label: "Game", Icon: Gamepad2, bg: "bg-[#dff0ff]", color: "text-[#2377e6]" },
+  { key: "ewallet", label: "E-Wallet", Icon: WalletCards, bg: "bg-[#dff8e9]", color: "text-[#16a463]" },
+  { key: "tagihan", label: "Tagihan", Icon: ReceiptText, bg: "bg-[#ffe7d2]", color: "text-[#e35a22]" },
+  { key: "tv", label: "TV Digital", Icon: Tv, bg: "bg-[#eee4ff]", color: "text-[#6d3fc4]" },
+  { key: "telkom", label: "Telkom", Icon: Headphones, bg: "bg-[#ffe1eb]", color: "text-[#e52f63]" },
+  { key: "pdam", label: "PDAM", Icon: Droplets, bg: "bg-[#e3f3ff]", color: "text-[#2f7be8]" },
+  { key: "internet", label: "Internet", Icon: Wifi, bg: "bg-[#ffe5e6]", color: "text-[#db2834]" },
+  { key: "lainnya", label: "Lainnya", Icon: MessageCircle, bg: "bg-[#def8e8]", color: "text-[#16a463]" },
+  { key: "semua", label: "Semua", Icon: Grid2X2, bg: "bg-[#f1f2f5]", color: "text-[#777f8d]" },
 ];
 
 const promos = [
@@ -161,14 +180,8 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
                 prefetch={false}
                 className="group flex min-w-0 flex-col items-center gap-2 text-center"
               >
-                <span className="relative h-[48px] w-[48px] shrink-0 overflow-hidden rounded-[15px] bg-white shadow-[0_8px_18px_rgba(35,25,22,0.08)] ring-1 ring-slate-950/[0.04] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(216,42,28,0.14)] min-[390px]:h-[50px] min-[390px]:w-[50px]">
-                  <Image
-                    src={service.icon}
-                    alt=""
-                    fill
-                    sizes="50px"
-                    className="object-contain"
-                  />
+                <span className={`grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] border border-slate-200/70 shadow-[0_8px_18px_rgba(35,25,22,0.06)] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(216,42,28,0.12)] ${service.bg}`}>
+                  <service.Icon className={`h-7 w-7 ${service.color}`} strokeWidth={2.35} />
                 </span>
                 <span className="max-w-[54px] text-[11px] font-bold leading-tight text-slate-950 min-[390px]:text-[11.5px]">
                   {service.label}
