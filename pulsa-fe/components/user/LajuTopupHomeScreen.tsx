@@ -86,7 +86,7 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
 
   return (
     <main className="min-h-svh bg-[#f6f4f3] pb-28 text-slate-950">
-      <section className="-mt-6 px-4">
+      <section className="mt-4 px-4">
         <div className="relative z-10 overflow-hidden rounded-[22px] bg-white p-3.5 shadow-[0_18px_38px_rgba(80,39,35,0.13)] ring-1 ring-slate-950/[0.04]">
           <div className="grid grid-cols-[minmax(0,1fr)_92px] gap-2.5 min-[390px]:grid-cols-[minmax(0,1fr)_102px] min-[390px]:gap-3">
             <Link href={saldoHref} prefetch={false} className="flex min-w-0 items-center gap-3">

@@ -17,13 +17,13 @@ export function AppTopHeader({ isLoggedIn = false, userName, saldo, role }: AppT
   void saldo;
 
   return (
-    <header className="brand-app-header sticky top-0 z-30 overflow-hidden bg-[#c91d23] px-4 pb-8 pt-4 text-white shadow-[0_18px_40px_rgba(166,29,24,0.24)]">
+    <header className="brand-app-header sticky top-0 z-20 overflow-hidden bg-[#c91d23] px-4 pb-4 pt-4 text-white shadow-[0_14px_30px_rgba(166,29,24,0.22)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_0%,rgba(255,178,36,0.72),transparent_34%),linear-gradient(135deg,#c91520_0%,#d92f18_44%,#ff7b00_100%)]" />
-      <div className="pointer-events-none absolute -left-16 bottom-[-46px] h-28 w-72 rounded-[50%] bg-white/95" />
+      <div className="pointer-events-none absolute -left-16 bottom-[-82px] h-28 w-72 rounded-[50%] bg-white/95" />
       <div className="pointer-events-none absolute left-[36%] top-5 h-24 w-80 -rotate-12 rounded-[50%] bg-[#90151d]/18" />
       <div className="pointer-events-none absolute right-[-24%] top-4 h-28 w-96 -rotate-12 rounded-[50%] bg-[#ff9c12]/22" />
 
-      <div className="relative flex h-[66px] items-center justify-between gap-2">
+      <div className="relative flex h-[62px] items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center">
           <Link
             href={homeHref}
