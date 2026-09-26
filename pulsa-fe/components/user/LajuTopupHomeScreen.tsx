@@ -102,14 +102,14 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               </div>
               <div className="min-w-0">
                 <p className="text-[12px] font-semibold text-slate-500 min-[390px]:text-[13px]">Saldo Utama</p>
-                <p className="mt-1 truncate text-[20px] font-black leading-none tracking-tight text-slate-950 min-[390px]:text-[26px]">
+                <p className="mt-1 truncate text-[20px] font-black leading-none tracking-tight text-slate-950 min-[390px]:text-[24px] min-[430px]:text-[26px]">
                   {formatRupiah(saldo)}
                 </p>
                 <p className="mt-1.5 truncate text-[11px] font-medium text-slate-500 min-[390px]:text-[12px]">
                   Isi saldo untuk transaksi lebih mudah
                 </p>
               </div>
-              <ChevronRight className="ml-auto hidden h-5 w-5 shrink-0 text-slate-900 min-[390px]:block" strokeWidth={2.7} />
+              <ChevronRight className="ml-auto hidden h-5 w-5 shrink-0 text-slate-900 min-[430px]:block" strokeWidth={2.7} />
             </Link>
 
             <div className="flex flex-col gap-2.5 border-l border-slate-200 pl-2.5 min-[390px]:pl-3">
