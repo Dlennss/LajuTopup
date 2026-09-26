@@ -5,7 +5,6 @@ import {
   ChevronRight,
   Clock3,
   Droplets,
-  Flame,
   Gamepad2,
   Grid2X2,
   Headphones,
@@ -51,24 +50,6 @@ const services: Array<{
   { key: "semua", label: "Semua", Icon: Grid2X2, bg: "bg-[#f1f2f5]", color: "text-[#777f8d]" },
 ];
 
-const promos = [
-  {
-    label: "Cashback setiap transaksi",
-    href: "/user/kategori",
-    image: `${assetBase}/06_promo/promo_cashback_card.png`,
-  },
-  {
-    label: "Harga lebih murah",
-    href: "/user/pulsa-data",
-    image: `${assetBase}/06_promo/promo_harga_murah_card.png`,
-  },
-  {
-    label: "Transaksi lebih cepat",
-    href: "/user/kategori",
-    image: `${assetBase}/06_promo/promo_transaksi_cepat_card.png`,
-  },
-];
-
 function formatRupiah(value: number) {
   return `Rp ${new Intl.NumberFormat("id-ID").format(Number(value || 0))}`;
 }
@@ -99,7 +80,6 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
   const topupHref = variant === "user" ? "/user/account/topup" : "/login";
   const sendHref = variant === "user" ? "/user/saldo/kirim" : "/login";
   const catalogHref = variant === "user" ? "/user/kategori" : "/kategori";
-  const pulsaDataHref = variant === "user" ? "/user/pulsa-data" : "/pulsa-data";
   const transaksiHref = variant === "user" ? "/user/transaksi" : "/transaksi";
   void displayName;
 
@@ -181,7 +161,7 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
                 className="group flex min-w-0 flex-col items-center gap-2 text-center"
               >
                 <span className={`grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] border border-slate-200/70 shadow-[0_8px_18px_rgba(35,25,22,0.06)] transition duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(216,42,28,0.12)] ${service.bg}`}>
-                  <service.Icon className={`h-7 w-7 ${service.color}`} strokeWidth={2.35} />
+                  <service.Icon className={`h-6 w-6 ${service.color}`} strokeWidth={2.3} />
                 </span>
                 <span className="max-w-[54px] text-[11px] font-bold leading-tight text-slate-950 min-[390px]:text-[11.5px]">
                   {service.label}
@@ -189,37 +169,6 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="mt-5 px-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="inline-flex items-center gap-2 text-[18px] font-black tracking-tight text-slate-950">
-            <Flame className="h-5 w-5 fill-[#e51d26] text-[#e51d26]" />
-            Promo Spesial
-          </h2>
-          <Link href={catalogHref} prefetch={false} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500">
-            Lihat Semua
-            <ChevronRight className="h-4 w-4" strokeWidth={2.4} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          {promos.map((promo) => (
-            <Link
-              key={promo.label}
-              href={promo.label === "Harga lebih murah" ? pulsaDataHref : catalogHref}
-              prefetch={false}
-              className="relative aspect-[297/142] overflow-hidden rounded-[10px] shadow-[0_10px_22px_rgba(130,39,30,0.09)]"
-            >
-              <Image
-                src={promo.image}
-                alt={promo.label}
-                fill
-                sizes="33vw"
-                className="object-cover"
-              />
-            </Link>
-          ))}
         </div>
       </section>
 
