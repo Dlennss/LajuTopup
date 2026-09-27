@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, Headphones } from "lucide-react";
 
 type AppTopHeaderProps = {
   isLoggedIn?: boolean;
@@ -22,7 +21,7 @@ export function AppTopHeader({ isLoggedIn = false, userName, saldo, role }: AppT
       <div className="pointer-events-none absolute left-[36%] top-4 h-20 w-80 -rotate-12 rounded-[50%] bg-[#90151d]/18" />
       <div className="pointer-events-none absolute right-[-24%] top-3 h-24 w-96 -rotate-12 rounded-[50%] bg-[#ff9c12]/22" />
 
-      <div className="relative flex h-[58px] items-center justify-between gap-2">
+      <div className="relative flex h-[58px] items-center">
         <div className="flex min-w-0 flex-1 items-center">
           <Link
             href={homeHref}
@@ -49,31 +48,6 @@ export function AppTopHeader({ isLoggedIn = false, userName, saldo, role }: AppT
               </span>
             </span>
           </Link>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          <Link
-            href={isRetailLoggedIn ? "/user/transaksi" : "/login"}
-            prefetch={false}
-            className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-slate-950 shadow-[0_12px_26px_rgba(105,23,16,0.22)] transition hover:-translate-y-0.5 min-[390px]:h-12 min-[390px]:w-12"
-            aria-label="Notifikasi transaksi"
-          >
-            <Bell className="h-5 w-5 min-[390px]:h-6 min-[390px]:w-6" strokeWidth={2.2} />
-            {isRetailLoggedIn ? (
-              <span className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full bg-[#ef1d2b] text-[12px] font-black text-white ring-2 ring-white">
-                3
-              </span>
-            ) : null}
-          </Link>
-          <a
-            href="https://wa.me/6282219107558"
-            target="_blank"
-            rel="noreferrer"
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-slate-950 shadow-[0_12px_26px_rgba(105,23,16,0.22)] transition hover:-translate-y-0.5 min-[390px]:h-12 min-[390px]:w-12"
-            aria-label="Hubungi bantuan via WhatsApp"
-          >
-            <Headphones className="h-5 w-5 min-[390px]:h-6 min-[390px]:w-6" strokeWidth={2.2} />
-          </a>
         </div>
       </div>
     </header>

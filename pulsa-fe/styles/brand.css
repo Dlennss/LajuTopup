@@ -16,11 +16,6 @@ body * { letter-spacing: 0 !important; }
 .brand-app-header { color: #ffffff; }
 .brand-app-header > .pointer-events-none { display: block; }
 .brand-app-header a[aria-label="LajuTopup"] { color: #ffffff; }
-.brand-app-header a[aria-label="Notifikasi transaksi"],
-.brand-app-header a[aria-label*="bantuan"] {
-  color: #020617;
-  border-radius: 9999px !important;
-}
 .brand-app-header span.italic { font-style: italic; }
 .brand-app-header span[class*="text-[10px]"] { color: inherit; opacity: .8; }
 .brand-wordmark { color: inherit; }
