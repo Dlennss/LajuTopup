@@ -27,6 +27,13 @@ type LajuTopupHomeScreenProps = {
   user?: UserSession | null;
   profile?: UserProfile | null;
   variant?: "user" | "guest";
+  recentActivity?: {
+    title: string;
+    timeLabel: string;
+    amountLabel: string;
+    statusLabel: string;
+    href?: string;
+  } | null;
 };
 
 const assetBase = "/lajutopup-assets/LajuTopup_Assets_Pecah";
@@ -75,7 +82,7 @@ function pathFor(key: string, variant: "user" | "guest") {
   }
 }
 
-export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTopupHomeScreenProps) {
+export function LajuTopupHomeScreen({ user, profile, variant = "user", recentActivity = null }: LajuTopupHomeScreenProps) {
   const displayName = profile?.nama || user?.name || "User";
   const isUserView = variant === "user";
   const saldo = Number(profile?.saldo || 0);
@@ -89,6 +96,8 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
   const balanceHint = isUserView ? "Isi saldo untuk transaksi lebih mudah" : "Login untuk melihat saldo dan transaksi";
   const PrimaryActionIcon = isUserView ? Plus : LogIn;
   const SecondaryActionIcon = isUserView ? Send : UserPlus;
+  const activityHref = recentActivity?.href || transaksiHref;
+  const shouldShowRecentActivity = isUserView && recentActivity;
   void displayName;
 
   return (
@@ -178,44 +187,46 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
         </div>
       </section>
 
-      <section className="mt-6 px-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="inline-flex items-center gap-2 text-[18px] font-black tracking-tight text-slate-950">
-            <Clock3 className="h-6 w-6 text-slate-950" strokeWidth={2.4} />
-            Aktivitas Terakhir
-          </h2>
-          <Link href={transaksiHref} prefetch={false} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500">
-            Lihat Semua
-            <ChevronRight className="h-4 w-4" strokeWidth={2.4} />
-          </Link>
-        </div>
+      {shouldShowRecentActivity ? (
+        <section className="mt-6 px-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="inline-flex items-center gap-2 text-[18px] font-black tracking-tight text-slate-950">
+              <Clock3 className="h-6 w-6 text-slate-950" strokeWidth={2.4} />
+              Aktivitas Terakhir
+            </h2>
+            <Link href={transaksiHref} prefetch={false} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500">
+              Lihat Semua
+              <ChevronRight className="h-4 w-4" strokeWidth={2.4} />
+            </Link>
+          </div>
 
-        <Link
-          href={transaksiHref}
-          prefetch={false}
-          className="flex items-center gap-3 rounded-[20px] bg-white p-4 shadow-[0_14px_28px_rgba(37,25,22,0.07)] ring-1 ring-slate-950/[0.04]"
-        >
-          <span className="relative grid h-[54px] w-[54px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[#e9fff3]">
-            <Image
-              src={`${assetBase}/07_activity/activity_icon.png`}
-              alt=""
-              fill
-              sizes="54px"
-              className="object-cover"
-            />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[15px] font-black text-slate-950">Pulsa Telkomsel 50.000</span>
-            <span className="mt-1 block text-[12px] font-medium text-slate-500">12 Sep 2025, 14:32</span>
-          </span>
-          <span className="text-right">
-            <span className="block text-[15px] font-black text-slate-950">- Rp 50.000</span>
-            <span className="mt-2 inline-flex rounded-full bg-[#dcfff0] px-4 py-1.5 text-[12px] font-black text-[#10a85d]">
-              Berhasil
+          <Link
+            href={activityHref}
+            prefetch={false}
+            className="flex items-center gap-3 rounded-[20px] bg-white p-4 shadow-[0_14px_28px_rgba(37,25,22,0.07)] ring-1 ring-slate-950/[0.04]"
+          >
+            <span className="relative grid h-[54px] w-[54px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[#e9fff3]">
+              <Image
+                src={`${assetBase}/07_activity/activity_icon.png`}
+                alt=""
+                fill
+                sizes="54px"
+                className="object-cover"
+              />
             </span>
-          </span>
-        </Link>
-      </section>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[15px] font-black text-slate-950">{recentActivity.title}</span>
+              <span className="mt-1 block text-[12px] font-medium text-slate-500">{recentActivity.timeLabel}</span>
+            </span>
+            <span className="text-right">
+              <span className="block text-[15px] font-black text-slate-950">{recentActivity.amountLabel}</span>
+              <span className="mt-2 inline-flex rounded-full bg-[#dcfff0] px-4 py-1.5 text-[12px] font-black text-[#10a85d]">
+                {recentActivity.statusLabel}
+              </span>
+            </span>
+          </Link>
+        </section>
+      ) : null}
 
       <div className="h-6" />
     </main>
