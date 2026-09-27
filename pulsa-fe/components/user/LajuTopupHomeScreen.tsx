@@ -9,12 +9,14 @@ import {
   Grid2X2,
   Headphones,
   Lightbulb,
+  LogIn,
   MessageCircle,
   Plus,
   ReceiptText,
   Send,
   Smartphone,
   Tv,
+  UserPlus,
   WalletCards,
   Wifi,
 } from "lucide-react";
@@ -75,12 +77,18 @@ function pathFor(key: string, variant: "user" | "guest") {
 
 export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTopupHomeScreenProps) {
   const displayName = profile?.nama || user?.name || "User";
-  const saldo = variant === "guest" ? 250000 : Number(profile?.saldo || 0);
+  const isUserView = variant === "user";
+  const saldo = Number(profile?.saldo || 0);
   const saldoHref = variant === "user" ? "/user/saldo" : "/login";
-  const topupHref = variant === "user" ? "/user/account/topup" : "/login";
-  const sendHref = variant === "user" ? "/user/saldo/kirim" : "/login";
+  const topupHref = isUserView ? "/user/account/topup" : "/login?callbackUrl=/user";
+  const sendHref = isUserView ? "/user/saldo/kirim" : "/register";
   const catalogHref = variant === "user" ? "/user/kategori" : "/kategori";
   const transaksiHref = variant === "user" ? "/user/transaksi" : "/transaksi";
+  const balanceTitle = isUserView ? "Saldo Utama" : "Saldo akun";
+  const balanceText = isUserView ? formatRupiah(saldo) : "Masuk dulu";
+  const balanceHint = isUserView ? "Isi saldo untuk transaksi lebih mudah" : "Login untuk melihat saldo dan transaksi";
+  const PrimaryActionIcon = isUserView ? Plus : LogIn;
+  const SecondaryActionIcon = isUserView ? Send : UserPlus;
   void displayName;
 
   return (
@@ -99,12 +107,12 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold text-slate-500 min-[390px]:text-[13px]">Saldo Utama</p>
+              <p className="text-[12px] font-semibold text-slate-500 min-[390px]:text-[13px]">{balanceTitle}</p>
               <p className="mt-1 whitespace-nowrap text-[24px] font-black leading-none tracking-tight text-slate-950 min-[390px]:text-[28px]">
-                {formatRupiah(saldo)}
+                {balanceText}
               </p>
               <p className="mt-1.5 truncate text-[11px] font-medium text-slate-500 min-[390px]:text-[12px]">
-                Isi saldo untuk transaksi lebih mudah
+                {balanceHint}
               </p>
             </div>
             <ChevronRight className="h-5 w-5 shrink-0 text-slate-900" strokeWidth={2.7} />
@@ -116,16 +124,16 @@ export function LajuTopupHomeScreen({ user, profile, variant = "user" }: LajuTop
               prefetch={false}
               className="inline-flex h-[46px] min-w-0 items-center justify-center gap-1.5 rounded-[14px] bg-linear-to-br from-[#ff512b] to-[#c91821] text-[13px] font-black text-white shadow-[0_12px_22px_rgba(216,42,28,0.24)] min-[390px]:h-[50px] min-[390px]:text-[14px]"
             >
-              <Plus className="h-5 w-5 shrink-0" strokeWidth={2.3} />
-              <span className="truncate">Isi Saldo</span>
+              <PrimaryActionIcon className="h-5 w-5 shrink-0" strokeWidth={2.3} />
+              <span className="truncate">{isUserView ? "Isi Saldo" : "Masuk"}</span>
             </Link>
             <Link
               href={sendHref}
               prefetch={false}
               className="inline-flex h-[46px] min-w-0 items-center justify-center gap-1.5 rounded-[14px] border border-[#efb5af] bg-[#fff5f3] text-[13px] font-black text-[#bd1e24] min-[390px]:h-[50px] min-[390px]:text-[14px]"
             >
-              <Send className="h-4.5 w-4.5 shrink-0 fill-[#bd1e24]/10" strokeWidth={2.4} />
-              <span className="truncate">Kirim</span>
+              <SecondaryActionIcon className="h-4.5 w-4.5 shrink-0 fill-[#bd1e24]/10" strokeWidth={2.4} />
+              <span className="truncate">{isUserView ? "Kirim" : "Daftar"}</span>
             </Link>
           </div>
         </div>
