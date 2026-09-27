@@ -98,7 +98,7 @@ export function UserProfilePhotoUploader({
         className="relative block cursor-pointer rounded-[28px] outline-none transition active:scale-95 focus-visible:ring-4 focus-visible:ring-white/30"
         aria-label="Pilih foto profil"
       >
-        <span className="relative grid h-20 w-20 overflow-hidden rounded-[26px] bg-white text-2xl font-black text-[#bc4227] shadow-[0_16px_34px_rgba(6,78,59,0.18)]">
+        <span className="relative grid h-20 w-20 overflow-hidden rounded-[26px] bg-white text-2xl font-black text-[#ef1d2b] shadow-[0_16px_34px_rgba(126,29,23,0.2)]">
           {photo ? (
             <span className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${photo})` }} />
           ) : (
@@ -106,7 +106,7 @@ export function UserProfilePhotoUploader({
           )}
           {loading ? <span className="absolute inset-0 grid place-items-center bg-black/30"><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /></span> : null}
         </span>
-        <span className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full border-3 border-[#bc4227] bg-white text-[#bc4227] shadow-[0_8px_18px_rgba(6,78,59,0.18)]">
+        <span className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full border-3 border-[#ef1d2b] bg-white text-[#ef1d2b] shadow-[0_8px_18px_rgba(126,29,23,0.18)]">
           <Camera className="h-4 w-4" strokeWidth={2.4} />
         </span>
       </button>
