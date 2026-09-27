@@ -94,7 +94,7 @@ jobs:
       - name: Build frontend standalone
         env:
           NEXT_TELEMETRY_DISABLED: "1"
-          NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED: "false"
+          NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED: "true"
           NEXT_PUBLIC_SITE_URL: https://lajutopup.com
           NEXTAUTH_URL: https://lajutopup.com
           API_BASE: http://127.0.0.1:8106
