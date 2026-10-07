@@ -45,14 +45,15 @@ open_best AS (
         PARTITION BY p_best.kategori_id, p_best.brand_id
         ORDER BY
           CASE
-            WHEN UPPER(p_best.nama) LIKE '%CUSTOMER%DENOM BEBAS%' THEN 0
+            WHEN UPPER(p_best.nama) LIKE '%OPEN AMOUNT%' THEN 0
+            WHEN UPPER(TRIM(p_best.sku)) = UPPER(regexp_replace(COALESCE(b_best.nama, ''), '[^A-Za-z0-9]', '', 'g')) THEN 1
             WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%'
               AND UPPER(p_best.nama) NOT LIKE '%[ELEKTRIK]%'
               AND UPPER(p_best.nama) NOT LIKE '%DRIVER%'
-              AND UPPER(p_best.nama) NOT LIKE '%BANK%' THEN 1
-            WHEN UPPER(TRIM(p_best.sku)) = UPPER(regexp_replace(COALESCE(b_best.nama, ''), '[^A-Za-z0-9]', '', 'g')) THEN 2
-            WHEN UPPER(p_best.nama) LIKE '%OPEN AMOUNT%' THEN 3
+              AND UPPER(p_best.nama) NOT LIKE '%BANK%'
+              AND UPPER(p_best.nama) NOT LIKE '%NOMINAL@NOHP%' THEN 2
             WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%' THEN 4
+            WHEN UPPER(p_best.nama) LIKE '%NOMINAL@NOHP%' THEN 7
             WHEN UPPER(p_best.nama) LIKE '%PROMO%' THEN 8
             WHEN UPPER(p_best.nama) LIKE '%DRIVER%' THEN 9
             ELSE 6
