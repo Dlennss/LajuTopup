@@ -138,6 +138,32 @@ func resolvePulsa24JamAppRequest(providerProductCode string, order *repository.A
 	return genericCode, amount
 }
 
+func resolvePulsa24JamAppDest(order *repository.AppOrderRow) string {
+	if order == nil {
+		return ""
+	}
+	dest := strings.TrimSpace(order.Dest)
+	if dest == "" || strings.Contains(dest, "@") || !pulsa24JamAppProductUsesNominalAtDest(order) {
+		return dest
+	}
+	nominal := order.Nominal
+	if nominal <= 0 {
+		nominal = order.Qty
+	}
+	if nominal <= 0 {
+		return dest
+	}
+	return fmt.Sprintf("%d@%s", nominal, dest)
+}
+
+func pulsa24JamAppProductUsesNominalAtDest(order *repository.AppOrderRow) bool {
+	if order == nil {
+		return false
+	}
+	name := strings.ToUpper(strings.TrimSpace(order.ProdukNamaSnapshot))
+	return strings.Contains(name, "NOMINAL@NOHP")
+}
+
 func pulsa24JamAppOrderRefID(order *repository.AppOrderRow) string {
 	if order != nil && order.ID > 0 {
 		return "PKA" + strings.ToUpper(strconv.FormatInt(order.ID, 36))

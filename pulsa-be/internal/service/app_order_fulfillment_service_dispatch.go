@@ -87,8 +87,10 @@ func (s *AppOrderFulfillmentService) DispatchPaidOrder(ctx context.Context, orde
 		return fmt.Errorf("%s", msg)
 	}
 	providerQty := order.Qty
+	providerDest := order.Dest
 	if provider == providerpkg.Pulsa24JamProviderName {
 		providerProductCode, providerQty = resolvePulsa24JamAppRequest(providerProductCode, order)
+		providerDest = resolvePulsa24JamAppDest(order)
 	}
 	providerRefID := order.InvoiceID
 	if provider == providerpkg.Pulsa24JamProviderName {
@@ -99,7 +101,7 @@ func (s *AppOrderFulfillmentService) DispatchPaidOrder(ctx context.Context, orde
 		"provider": provider,
 		"product":  providerProductCode,
 		"qty":      providerQty,
-		"dest":     order.Dest,
+		"dest":     providerDest,
 		"refid":    providerRefID,
 		"invoice":  order.InvoiceID,
 	}
@@ -121,7 +123,7 @@ func (s *AppOrderFulfillmentService) DispatchPaidOrder(ctx context.Context, orde
 		return err
 	}
 
-	hs, body, price, sn, callErr := s.callAppOrderProvider(ctx, provider, providerProductCode, providerQty, order)
+	hs, body, price, sn, callErr := s.callAppOrderProvider(ctx, provider, providerProductCode, providerDest, providerQty, order)
 
 	rawRespJSON, _ := json.Marshal(map[string]any{
 		"http_status": hs,
@@ -305,7 +307,7 @@ func (s *AppOrderFulfillmentService) DispatchPaidOrder(ctx context.Context, orde
 	return nil
 }
 
-func (s *AppOrderFulfillmentService) callAppOrderProvider(ctx context.Context, provider, providerProductCode string, providerQty int64, order *repository.AppOrderRow) (hs int, body string, price int64, sn string, callErr error) {
+func (s *AppOrderFulfillmentService) callAppOrderProvider(ctx context.Context, provider, providerProductCode, providerDest string, providerQty int64, order *repository.AppOrderRow) (hs int, body string, price int64, sn string, callErr error) {
 	switch provider {
 	case "pulsa24jam":
 		client := s.providerClients["pulsa24jam"]
@@ -315,7 +317,7 @@ func (s *AppOrderFulfillmentService) callAppOrderProvider(ctx context.Context, p
 		resp, nextErr := client.Pay(ctx, providerpkg.PayRequest{
 			Command: "PAY",
 			Product: providerProductCode,
-			Dest:    order.Dest,
+			Dest:    providerDest,
 			Qty:     providerQty,
 			RefID:   pulsa24JamAppOrderRefID(order),
 		})

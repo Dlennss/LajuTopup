@@ -101,6 +101,38 @@ func TestResolvePulsa24JamAppRequest(t *testing.T) {
 	}
 }
 
+func TestResolvePulsa24JamAppDest(t *testing.T) {
+	got := resolvePulsa24JamAppDest(&repository.AppOrderRow{
+		ProdukNamaSnapshot: "GOPAY CUSTOMER DENOM BEBAS 1.250 (FORMAT: NOMINAL@NOHP)",
+		Dest:               "085771187308",
+		Qty:                10000,
+		Nominal:            10000,
+	})
+	if got != "10000@085771187308" {
+		t.Fatalf("dest = %q, want nominal@nohp", got)
+	}
+
+	alreadyFormatted := resolvePulsa24JamAppDest(&repository.AppOrderRow{
+		ProdukNamaSnapshot: "GOPAY CUSTOMER DENOM BEBAS 1.250 (FORMAT: NOMINAL@NOHP)",
+		Dest:               "10000@085771187308",
+		Qty:                10000,
+		Nominal:            10000,
+	})
+	if alreadyFormatted != "10000@085771187308" {
+		t.Fatalf("dest = %q, want unchanged formatted dest", alreadyFormatted)
+	}
+
+	regular := resolvePulsa24JamAppDest(&repository.AppOrderRow{
+		ProdukNamaSnapshot: "Gopay 10.000",
+		Dest:               "085771187308",
+		Qty:                10000,
+		Nominal:            10000,
+	})
+	if regular != "085771187308" {
+		t.Fatalf("dest = %q, want regular dest unchanged", regular)
+	}
+}
+
 func TestPulsa24JamAppOrderRefIDFitsH2HRLimit(t *testing.T) {
 	got := pulsa24JamAppOrderRefID(&repository.AppOrderRow{
 		ID:        81,
