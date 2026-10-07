@@ -151,21 +151,24 @@ func currentCategoryBrand(headings []string, lastCategory string) (string, strin
 		return "", "", false
 	}
 	brand := headings[len(headings)-1]
-	category := brand
-	if len(headings) >= 2 {
+	category := lastCategory
+	if len(headings) >= 2 && isStandaloneCategory(headings[len(headings)-2]) {
 		category = headings[len(headings)-2]
-	} else if lastCategory != "" && !isStandaloneCategory(brand) {
-		category = lastCategory
+	} else if category == "" {
+		category = brand
 	}
 	return normalizeMasterName(category), normalizeMasterName(brand), true
 }
 
 func isStandaloneCategory(value string) bool {
 	switch strings.ToLower(strings.TrimSpace(value)) {
-	case "asuransi", "bank transfer", "bpjs", "e-money", "e-wallet", "game",
-		"internet pascabayar", "listrik", "masa aktif", "paket data",
-		"paket sms", "paket telepon", "pdam", "pln", "streaming",
-		"tv", "voucher", "voucher digital":
+	case "asuransi", "bank transfer", "bpjs", "e-money", "e-wallet",
+		"game", "internet & telco", "internet pascabayar", "listrik",
+		"masa aktif", "multifinance", "pajak daerah", "paket data",
+		"paket sms", "paket telepon", "pascabayar", "pdam", "pembayaran",
+		"pln", "pulsa", "samsat", "streaming", "tagihan air",
+		"tagihan gas", "telepon & sms", "transfer bank", "tv",
+		"tv & streaming", "voucher", "voucher data", "voucher digital":
 		return true
 	default:
 		return false
@@ -288,9 +291,15 @@ func writeMigration(path string, products []productRow) error {
 	fmt.Fprintln(w, "BEGIN;")
 	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "ALTER TABLE public.produk_provider_map")
+	fmt.Fprintln(w, "  ADD COLUMN IF NOT EXISTS special_code TEXT;")
+	fmt.Fprintln(w, "ALTER TABLE public.produk_provider_map")
+	fmt.Fprintln(w, "  ADD COLUMN IF NOT EXISTS mode TEXT NOT NULL DEFAULT 'normal';")
+	fmt.Fprintln(w, "ALTER TABLE public.produk_provider_map")
 	fmt.Fprintln(w, "  ADD COLUMN IF NOT EXISTS minimal_nominal BIGINT NULL;")
 	fmt.Fprintln(w, "ALTER TABLE public.produk_provider_map")
 	fmt.Fprintln(w, "  ADD COLUMN IF NOT EXISTS maksimal_nominal BIGINT NULL;")
+	fmt.Fprintln(w, "ALTER TABLE public.produk_provider_map")
+	fmt.Fprintln(w, "  ADD COLUMN IF NOT EXISTS fee_rp BIGINT NOT NULL DEFAULT 0;")
 	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "DO $$")
 	fmt.Fprintln(w, "BEGIN")

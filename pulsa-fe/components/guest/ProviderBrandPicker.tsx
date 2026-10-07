@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getBrandLogo } from "@/lib/brand-logos";
+import { getYuscomDisplayBrandVisual } from "@/lib/yuscom-display-brand-visuals";
 import type { UserBrandItem } from "@/components/user/types";
 
 type ProviderBrandPickerProps = {
@@ -19,6 +20,7 @@ export function ProviderBrandPicker({ items, layout = "grid", columns = 3 }: Pro
     <section className={layout === "list" ? "space-y-2" : columns === 2 ? "grid grid-cols-2 gap-3" : "grid grid-cols-3 gap-3"}>
       {items.map(({ brand, href }) => {
         const logo = getBrandLogo(brand.nama);
+        const visual = logo ? null : getYuscomDisplayBrandVisual(brand.nama);
         return (
           <Link
             key={brand.id}
@@ -34,8 +36,12 @@ export function ProviderBrandPicker({ items, layout = "grid", columns = 3 }: Pro
               <div className={layout === "list" ? "grid h-12 w-12 place-items-center overflow-hidden" : "grid h-14 w-14 place-items-center overflow-hidden"}>
                 {logo ? (
                   <Image src={logo.src} alt={logo.alt} title={logo.alt} width={56} height={56} className="h-full w-full object-contain" />
+                ) : visual?.kind === "image" ? (
+                  <Image src={visual.src} alt={visual.alt} title={visual.alt} width={56} height={56} className="h-full w-full object-contain" />
                 ) : (
-                  <span className="text-base font-black uppercase tracking-tight text-sky-700">{brand.nama.slice(0, 2)}</span>
+                  <span className="grid h-full w-full place-items-center rounded-md border border-slate-200 bg-slate-50 px-1 text-center text-[10px] font-black uppercase leading-tight text-slate-700">
+                    {visual?.kind === "badge" ? visual.label : brand.nama.slice(0, 2)}
+                  </span>
                 )}
               </div>
             </div>
