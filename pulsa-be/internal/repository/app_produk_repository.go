@@ -146,6 +146,21 @@ WHERE p.aktif = true
   AND ($1 = '' OR p.sku ILIKE '%'||$1||'%' OR p.nama ILIKE '%'||$1||'%')
   AND ($2 <= 0 OR p.kategori_id = $2)
   AND ($3 <= 0 OR p.brand_id = $3)
+  AND (
+    p.tipe_harga::text = 'OPEN_AMOUNT'
+    OR NOT EXISTS (
+      SELECT 1
+      FROM public.produk p_open
+      JOIN public.produk_app_pricing app_open
+        ON app_open.produk_id = p_open.id
+       AND app_open.aktif = true
+       AND LOWER(TRIM(app_open.provider)) = 'pulsa24jam'
+      WHERE p_open.aktif = true
+        AND p_open.kategori_id = p.kategori_id
+        AND p_open.brand_id = p.brand_id
+        AND p_open.tipe_harga::text = 'OPEN_AMOUNT'
+    )
+  )
 ORDER BY COALESCE(sales.success_count, 0) DESC,
          COALESCE(app.harga, 0) ASC,
          p.id DESC
