@@ -95,6 +95,14 @@ type pulsa24JamPayResponse struct {
 	Actions       []map[string]string `json:"actions"`
 }
 
+type Pulsa24JamBalanceResponse struct {
+	HTTPStatus int
+	Command    string
+	Balance    int64
+	Body       string
+	Raw        map[string]any
+}
+
 type Pulsa24JamDepositQRISResponse struct {
 	RefID         string
 	ProviderRefID string
@@ -300,6 +308,59 @@ func firstInt64Pointer(values ...*int64) *int64 {
 		}
 	}
 	return nil
+}
+
+func (a *Pulsa24JamAdapter) Balance(ctx context.Context) (*Pulsa24JamBalanceResponse, error) {
+	if !a.Configured() {
+		return nil, fmt.Errorf("pulsa24jam credential belum lengkap")
+	}
+	payload := pulsa24JamPayRequest{
+		Commands: "SALDO",
+		PIN:      a.PIN,
+	}
+	rawPayload, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, a.trxURL(), bytes.NewReader(rawPayload))
+	if err != nil {
+		return nil, err
+	}
+	httpReq.Header.Set("Accept", "application/json")
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("X-Api-Key", a.APIKey)
+
+	res, err := a.Client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	bodyBytes, readErr := io.ReadAll(res.Body)
+	if readErr != nil {
+		return nil, readErr
+	}
+	body := string(bodyBytes)
+	var out pulsa24JamPayResponse
+	if err := json.Unmarshal(bodyBytes, &out); err != nil {
+		return nil, fmt.Errorf("response saldo Pulsa24Jam tidak valid: %w", err)
+	}
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices || !out.OK {
+		msg := firstNonEmpty(out.Message, out.Msg, out.Keterangan, body)
+		return nil, fmt.Errorf("saldo Pulsa24Jam gagal: %s", msg)
+	}
+	return &Pulsa24JamBalanceResponse{
+		HTTPStatus: res.StatusCode,
+		Command:    firstNonEmpty(out.Command, payload.Commands),
+		Balance:    out.Balance,
+		Body:       body,
+		Raw: map[string]any{
+			"ok":      out.OK,
+			"command": firstNonEmpty(out.Command, payload.Commands),
+			"balance": out.Balance,
+		},
+	}, nil
 }
 
 func (a *Pulsa24JamAdapter) Pay(ctx context.Context, req PayRequest) (*PayResponse, error) {
