@@ -147,8 +147,42 @@ WHERE p.aktif = true
   AND ($2 <= 0 OR p.kategori_id = $2)
   AND ($3 <= 0 OR p.brand_id = $3)
   AND (
-    p.tipe_harga::text = 'OPEN_AMOUNT'
-    OR NOT EXISTS (
+    (
+      p.tipe_harga::text = 'OPEN_AMOUNT'
+      AND p.id = (
+        SELECT p_best.id
+        FROM public.produk p_best
+        JOIN public.produk_app_pricing app_best
+          ON app_best.produk_id = p_best.id
+         AND app_best.aktif = true
+         AND LOWER(TRIM(app_best.provider)) = 'pulsa24jam'
+        WHERE p_best.aktif = true
+          AND p_best.kategori_id = p.kategori_id
+          AND p_best.brand_id = p.brand_id
+          AND p_best.tipe_harga::text = 'OPEN_AMOUNT'
+        ORDER BY
+          CASE
+            WHEN UPPER(p_best.nama) LIKE '%CUSTOMER%DENOM BEBAS%' THEN 0
+            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%'
+              AND UPPER(p_best.nama) NOT LIKE '%[ELEKTRIK]%'
+              AND UPPER(p_best.nama) NOT LIKE '%DRIVER%'
+              AND UPPER(p_best.nama) NOT LIKE '%BANK%' THEN 1
+            WHEN UPPER(TRIM(p_best.sku)) = UPPER(regexp_replace(COALESCE(b.nama, ''), '[^A-Za-z0-9]', '', 'g')) THEN 2
+            WHEN UPPER(p_best.nama) LIKE '%OPEN AMOUNT%' THEN 3
+            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%' THEN 4
+            WHEN UPPER(p_best.nama) LIKE '%PROMO%' THEN 8
+            WHEN UPPER(p_best.nama) LIKE '%DRIVER%' THEN 9
+            ELSE 6
+          END ASC,
+          app_best.harga ASC,
+          LENGTH(p_best.nama) ASC,
+          p_best.id DESC
+        LIMIT 1
+      )
+    )
+    OR (
+      p.tipe_harga::text <> 'OPEN_AMOUNT'
+      AND NOT EXISTS (
       SELECT 1
       FROM public.produk p_open
       JOIN public.produk_app_pricing app_open
@@ -159,6 +193,7 @@ WHERE p.aktif = true
         AND p_open.kategori_id = p.kategori_id
         AND p_open.brand_id = p.brand_id
         AND p_open.tipe_harga::text = 'OPEN_AMOUNT'
+      )
     )
   )
 ORDER BY COALESCE(sales.success_count, 0) DESC,
