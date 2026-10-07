@@ -54,6 +54,7 @@ func main() {
 
 	dbConn := connectDB(cfg.DatabaseURL)
 	defer dbConn.Close()
+	applyPulsa24JamCatalogSeed(dbConn)
 
 	var ys *yuscom.Client
 	if cfg.YuscomBaseURL != "" && cfg.YuscomMemberID != "" && cfg.YuscomPIN != "" && cfg.YuscomPassword != "" {
