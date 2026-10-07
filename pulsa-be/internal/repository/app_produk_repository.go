@@ -17,6 +17,58 @@ func NewAppProdukRepository(db *sql.DB) *AppProdukRepository {
 func (r *AppProdukRepository) List(ctx context.Context, q string, kategoriID, brandID int64) ([]AppProdukRow, error) {
 	q = strings.TrimSpace(q)
 	rows, err := r.db.QueryContext(ctx, `
+WITH app_prices AS (
+  SELECT DISTINCT ON (a.produk_id)
+    a.produk_id,
+    a.harga
+  FROM public.produk_app_pricing a
+  WHERE a.aktif = true
+    AND LOWER(TRIM(a.provider)) = 'pulsa24jam'
+  ORDER BY
+    a.produk_id,
+    a.harga ASC,
+    a.id DESC
+),
+open_brands AS (
+  SELECT DISTINCT p_open.kategori_id, p_open.brand_id
+  FROM public.produk p_open
+  JOIN app_prices app_open ON app_open.produk_id = p_open.id
+  WHERE p_open.aktif = true
+    AND p_open.tipe_harga::text = 'OPEN_AMOUNT'
+),
+open_best AS (
+  SELECT id
+  FROM (
+    SELECT
+      p_best.id,
+      ROW_NUMBER() OVER (
+        PARTITION BY p_best.kategori_id, p_best.brand_id
+        ORDER BY
+          CASE
+            WHEN UPPER(p_best.nama) LIKE '%CUSTOMER%DENOM BEBAS%' THEN 0
+            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%'
+              AND UPPER(p_best.nama) NOT LIKE '%[ELEKTRIK]%'
+              AND UPPER(p_best.nama) NOT LIKE '%DRIVER%'
+              AND UPPER(p_best.nama) NOT LIKE '%BANK%' THEN 1
+            WHEN UPPER(TRIM(p_best.sku)) = UPPER(regexp_replace(COALESCE(b_best.nama, ''), '[^A-Za-z0-9]', '', 'g')) THEN 2
+            WHEN UPPER(p_best.nama) LIKE '%OPEN AMOUNT%' THEN 3
+            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%' THEN 4
+            WHEN UPPER(p_best.nama) LIKE '%PROMO%' THEN 8
+            WHEN UPPER(p_best.nama) LIKE '%DRIVER%' THEN 9
+            ELSE 6
+          END ASC,
+          app_best.harga ASC,
+          LENGTH(p_best.nama) ASC,
+          p_best.id DESC
+      ) AS rn
+    FROM public.produk p_best
+    JOIN app_prices app_best ON app_best.produk_id = p_best.id
+    LEFT JOIN public.brand b_best ON b_best.id = p_best.brand_id
+    WHERE p_best.aktif = true
+      AND p_best.tipe_harga::text = 'OPEN_AMOUNT'
+  ) ranked_open
+  WHERE rn = 1
+)
 SELECT
   p.id,
   p.sku,
@@ -114,24 +166,7 @@ SELECT
   p.dibuat_pada,
   p.diubah_pada
 FROM public.produk p
-JOIN LATERAL (
-  SELECT a.provider, a.harga
-  FROM public.produk_app_pricing a
-  WHERE a.produk_id = p.id
-    AND a.aktif = true
-    AND LOWER(TRIM(a.provider)) = 'pulsa24jam'
-  ORDER BY
-    a.harga ASC,
-    a.id DESC
-  LIMIT 1
-) app ON true
-LEFT JOIN LATERAL (
-  SELECT COUNT(*)::bigint AS success_count
-  FROM public.app_order ao_rank
-  WHERE ao_rank.produk_id = p.id
-    AND ao_rank.status = 'success'
-    AND ao_rank.dibuat_pada >= NOW() - INTERVAL '90 days'
-) sales ON true
+JOIN app_prices app ON app.produk_id = p.id
 LEFT JOIN public.kategori_fee_app kfa
   ON kfa.kategori_id = p.kategori_id
  AND kfa.aktif = true
@@ -149,55 +184,19 @@ WHERE p.aktif = true
   AND (
     (
       p.tipe_harga::text = 'OPEN_AMOUNT'
-      AND p.id = (
-        SELECT p_best.id
-        FROM public.produk p_best
-        JOIN public.produk_app_pricing app_best
-          ON app_best.produk_id = p_best.id
-         AND app_best.aktif = true
-         AND LOWER(TRIM(app_best.provider)) = 'pulsa24jam'
-        WHERE p_best.aktif = true
-          AND p_best.kategori_id = p.kategori_id
-          AND p_best.brand_id = p.brand_id
-          AND p_best.tipe_harga::text = 'OPEN_AMOUNT'
-        ORDER BY
-          CASE
-            WHEN UPPER(p_best.nama) LIKE '%CUSTOMER%DENOM BEBAS%' THEN 0
-            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%'
-              AND UPPER(p_best.nama) NOT LIKE '%[ELEKTRIK]%'
-              AND UPPER(p_best.nama) NOT LIKE '%DRIVER%'
-              AND UPPER(p_best.nama) NOT LIKE '%BANK%' THEN 1
-            WHEN UPPER(TRIM(p_best.sku)) = UPPER(regexp_replace(COALESCE(b.nama, ''), '[^A-Za-z0-9]', '', 'g')) THEN 2
-            WHEN UPPER(p_best.nama) LIKE '%OPEN AMOUNT%' THEN 3
-            WHEN UPPER(p_best.nama) LIKE '%DENOM BEBAS%' THEN 4
-            WHEN UPPER(p_best.nama) LIKE '%PROMO%' THEN 8
-            WHEN UPPER(p_best.nama) LIKE '%DRIVER%' THEN 9
-            ELSE 6
-          END ASC,
-          app_best.harga ASC,
-          LENGTH(p_best.nama) ASC,
-          p_best.id DESC
-        LIMIT 1
-      )
+      AND p.id IN (SELECT id FROM open_best)
     )
     OR (
       p.tipe_harga::text <> 'OPEN_AMOUNT'
       AND NOT EXISTS (
       SELECT 1
-      FROM public.produk p_open
-      JOIN public.produk_app_pricing app_open
-        ON app_open.produk_id = p_open.id
-       AND app_open.aktif = true
-       AND LOWER(TRIM(app_open.provider)) = 'pulsa24jam'
-      WHERE p_open.aktif = true
-        AND p_open.kategori_id = p.kategori_id
-        AND p_open.brand_id = p.brand_id
-        AND p_open.tipe_harga::text = 'OPEN_AMOUNT'
+      FROM open_brands ob
+      WHERE ob.kategori_id = p.kategori_id
+        AND ob.brand_id = p.brand_id
       )
     )
   )
-ORDER BY COALESCE(sales.success_count, 0) DESC,
-         COALESCE(app.harga, 0) ASC,
+ORDER BY COALESCE(app.harga, 0) ASC,
          p.id DESC
 `, q, kategoriID, brandID)
 	if err != nil {
