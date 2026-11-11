@@ -1,0 +1,23 @@
+[Unit]
+Description=LajuTopup backend
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=lajutopup
+Group=lajutopup
+WorkingDirectory=/home/mitra-p24/hit/LajuTopup/pulsa-be
+EnvironmentFile=/etc/lajutopup/backend.env
+ExecStart=/home/mitra-p24/hit/LajuTopup/pulsa-be/lajutopup-api
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+UMask=0027
+MemoryHigh=192M
+MemoryMax=384M
+CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1 @@
+lajutopup-deploy ALL=(root) NOPASSWD: /usr/local/sbin/lajutopup-activate ""

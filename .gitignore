@@ -41,3 +41,4 @@ pulsa-be/log.txt
 .DS_Store
 .vscode/
 .idea/
+__pycache__/

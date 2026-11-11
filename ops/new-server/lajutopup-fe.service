@@ -1,0 +1,23 @@
+[Unit]
+Description=LajuTopup frontend
+After=network.target lajutopup-be.service
+
+[Service]
+Type=simple
+User=lajutopup
+Group=lajutopup
+WorkingDirectory=/home/mitra-p24/hit/LajuTopup/pulsa-fe/.next/standalone
+EnvironmentFile=/etc/lajutopup/frontend.env
+ExecStart=/usr/local/bin/node server.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+UMask=0027
+MemoryHigh=384M
+MemoryMax=640M
+CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target

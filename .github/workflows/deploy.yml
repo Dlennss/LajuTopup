@@ -2,12 +2,9 @@ name: Deploy
 
 on:
   workflow_run:
-    workflows:
-      - CI
-    branches:
-      - main
-    types:
-      - completed
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -19,143 +16,142 @@ concurrency:
 
 jobs:
   deploy:
-    name: Build and Deploy to Server
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 75
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-
+    name: Deploy LajuTopup to new server
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     env:
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-      SERVER_HOST: ${{ secrets.SERVER_HOST }}
-      SERVER_PORT: ${{ secrets.SERVER_PORT }}
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-      BACKEND_SOURCE_DIR: ${{ secrets.BACKEND_SOURCE_DIR }}
-      FRONTEND_SOURCE_DIR: ${{ secrets.FRONTEND_SOURCE_DIR }}
-      FRONTEND_RELEASE_DIR: ${{ secrets.FRONTEND_RELEASE_DIR }}
+      SERVER_HOST: 103.31.39.97
+      SERVER_PORT: '22'
+      SERVER_USER: lajutopup-deploy
 
     steps:
-      - name: Checkout
+      - name: Checkout tested commit
         uses: actions/checkout@v4
         with:
           ref: ${{ env.RELEASE_SHA }}
 
-      - name: Validate deployment secrets
+      - name: Skip superseded release
+        id: revision
         shell: bash
         run: |
           set -euo pipefail
-          test "$BACKEND_SOURCE_DIR" = pulsa-be
-          test "$FRONTEND_SOURCE_DIR" = pulsa-fe
-          test "$FRONTEND_RELEASE_DIR" = /var/lib/syslog-ng/lajutopup/frontend
-          required=(
-            SERVER_HOST
-            SERVER_PORT
-            SERVER_USER
-            SERVER_SSH_KEY
-          )
-          for name in "${required[@]}"; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::$name is empty. Add it in GitHub repository secrets."
-              exit 1
-            fi
-          done
-          if [ ! -f "${BACKEND_SOURCE_DIR}/go.sum" ]; then
-            echo "::error::BACKEND_SOURCE_DIR must point to the backend folder in this repository, for example: pulsa-be"
-            exit 1
-          fi
-          if [ ! -f "${FRONTEND_SOURCE_DIR}/package-lock.json" ]; then
-            echo "::error::FRONTEND_SOURCE_DIR must point to the frontend folder in this repository, for example: pulsa-fe"
-            exit 1
+          latest=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$latest" = "$RELEASE_SHA" ]; then
+            echo 'current=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'current=false' >> "$GITHUB_OUTPUT"
+            echo 'A newer main commit exists; this release will not be deployed.'
           fi
 
       - name: Setup Go
+        if: steps.revision.outputs.current == 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.2"
+          go-version-file: pulsa-be/go.mod
           cache-dependency-path: pulsa-be/go.sum
 
       - name: Setup Node
+        if: steps.revision.outputs.current == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: "20.11.1"
+          node-version: '22'
           cache: npm
           cache-dependency-path: pulsa-fe/package-lock.json
 
-      - name: Build backend
+      - name: Test and build Linux x86-64 backend
+        if: steps.revision.outputs.current == 'true'
+        working-directory: pulsa-be
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p deploy/backend
-          cd "$BACKEND_SOURCE_DIR"
-          go mod download
           go test ./...
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o ../deploy/backend/lajutopup-api .
+          mkdir -p ../deploy/backend
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o ../deploy/backend/lajutopup-api .
 
       - name: Build frontend standalone
+        if: steps.revision.outputs.current == 'true'
         env:
-          NEXT_TELEMETRY_DISABLED: "1"
-          NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED: "true"
+          NEXT_TELEMETRY_DISABLED: '1'
+          NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED: 'false'
+          NEXT_PUBLIC_TURNSTILE_ENABLED: 'false'
           NEXT_PUBLIC_SITE_URL: https://lajutopup.com
           NEXTAUTH_URL: https://lajutopup.com
           API_BASE: http://127.0.0.1:8106
         shell: bash
         run: |
           set -euo pipefail
-          cd "$FRONTEND_SOURCE_DIR"
+          cd pulsa-fe
           npm ci
           npm run build
           cd ..
-          rm -rf deploy/frontend
           mkdir -p deploy/frontend/.next
-          cp -R "$FRONTEND_SOURCE_DIR/.next/standalone/." deploy/frontend/
-          cp -R "$FRONTEND_SOURCE_DIR/.next/static" deploy/frontend/.next/static
-          cp -R "$FRONTEND_SOURCE_DIR/public" deploy/frontend/public
-          printf '%s\n' "$RELEASE_SHA" > deploy/frontend/DEPLOY_COMMIT
+          cp -R pulsa-fe/.next/standalone/. deploy/frontend/
+          cp -R pulsa-fe/.next/static deploy/frontend/.next/static
+          cp -R pulsa-fe/public deploy/frontend/public
+          printf '%s\n' "$RELEASE_SHA" > deploy/DEPLOY_COMMIT
           printf '%s\n' "$RELEASE_SHA" > deploy/frontend/public/deploy-version.txt
+          tar -czf release.tar.gz -C deploy DEPLOY_COMMIT backend frontend
+          sha256sum release.tar.gz > release.sha256
 
-      - name: Install SSH tools
+      - name: Configure verified SSH connection
+        if: steps.revision.outputs.current == 'true'
+        env:
+          DEPLOY_KEY: ${{ secrets.LAJUTOPUP_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.LAJUTOPUP_KNOWN_HOSTS }}
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y rsync
+          test -n "$DEPLOY_KEY"
+          test -n "$KNOWN_HOSTS"
           install -d -m 700 "$HOME/.ssh"
-          printf '%s\n' "$SERVER_SSH_KEY" > "$HOME/.ssh/lajutopup-deploy"
-          chmod 600 "$HOME/.ssh/lajutopup-deploy"
+          printf '%s\n' "$DEPLOY_KEY" > "$HOME/.ssh/lajutopup-deploy"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/lajutopup-known-hosts"
+          chmod 600 "$HOME/.ssh/lajutopup-deploy" "$HOME/.ssh/lajutopup-known-hosts"
 
-      - name: Upload release files
+      - name: Upload and activate verified release
+        if: steps.revision.outputs.current == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          SSH_OPTS="-i $HOME/.ssh/lajutopup-deploy -o IdentitiesOnly=yes -p ${SERVER_PORT} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-          BACKEND_RELEASE_DIR="lajutopup/${BACKEND_SOURCE_DIR}"
-
-          ssh ${SSH_OPTS} "${SERVER_USER}@${SERVER_HOST}" \
-            "set -e;
-             mkdir -p \"\$HOME/${BACKEND_RELEASE_DIR}\";
-             mkdir -p \"${FRONTEND_RELEASE_DIR}\""
-
-          rsync -az --delete -e "ssh ${SSH_OPTS}" \
-            deploy/frontend/ "${SERVER_USER}@${SERVER_HOST}:${FRONTEND_RELEASE_DIR}/"
-
-          rsync -az -e "ssh ${SSH_OPTS}" \
-            deploy/backend/lajutopup-api "${SERVER_USER}@${SERVER_HOST}:~/${BACKEND_RELEASE_DIR}/lajutopup-api"
-
-      - name: Activate LajuTopup and verify services
-        shell: bash
-        run: |
-          set -euo pipefail
-          SSH_OPTS="-i $HOME/.ssh/lajutopup-deploy -o IdentitiesOnly=yes -p ${SERVER_PORT} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-          ssh ${SSH_OPTS} "${SERVER_USER}@${SERVER_HOST}" \
-            'sudo -n /usr/local/sbin/lajutopup-activate'
+          latest=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$latest" != "$RELEASE_SHA" ]; then
+            echo 'Newer main commit found before activation; refusing a stale deployment.'
+            exit 1
+          fi
+          opts=(-i "$HOME/.ssh/lajutopup-deploy" -o IdentitiesOnly=yes
+                -o BatchMode=yes -o StrictHostKeyChecking=yes
+                -o "UserKnownHostsFile=$HOME/.ssh/lajutopup-known-hosts"
+                -o ConnectTimeout=15)
+          target="${SERVER_USER}@${SERVER_HOST}"
+          scp "${opts[@]}" -P "$SERVER_PORT" release.tar.gz "$target:incoming/release.tar.gz.upload"
+          scp "${opts[@]}" -P "$SERVER_PORT" release.sha256 "$target:incoming/release.sha256.upload"
+          ssh "${opts[@]}" -p "$SERVER_PORT" "$target" '
+            set -eu
+            cd "$HOME/incoming"
+            mv release.tar.gz.upload release.tar.gz
+            mv release.sha256.upload release.sha256
+            sudo -n /usr/local/sbin/lajutopup-activate
+          '
 
       - name: Verify public release
+        if: steps.revision.outputs.current == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          actual=$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "https://lajutopup.com/deploy-version.txt?commit=${RELEASE_SHA}")
+          actual=$(curl --fail --silent --show-error --retry 5 --retry-delay 3 --max-time 20 \
+            "https://lajutopup.com/deploy-version.txt?commit=${RELEASE_SHA}")
           test "$actual" = "$RELEASE_SHA"
+          curl --fail --silent --show-error --max-time 20 -o /dev/null https://lajutopup.com/
+          printf 'Deployed `%s` to https://lajutopup.com\n' "$RELEASE_SHA" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Remove temporary SSH key
         if: always()
-        run: rm -f "$HOME/.ssh/lajutopup-deploy"
+        shell: bash
+        run: rm -f "$HOME/.ssh/lajutopup-deploy" "$HOME/.ssh/lajutopup-known-hosts"
