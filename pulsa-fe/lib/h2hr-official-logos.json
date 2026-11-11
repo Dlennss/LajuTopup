@@ -521,12 +521,6 @@
     "sourcePage": "https://www.kbbank.co.id/",
     "assetUrl": "https://www.kbbank.co.id/favicon.ico"
   },
-  "motionpay": {
-    "src": "/h2hr-brand-logos/motionpay.png",
-    "alt": "Logo MotionPay",
-    "sourcePage": "https://www.motionpay.id/",
-    "assetUrl": "https://storage.googleapis.com/motion-web/navbar_logo/sw1taiDvnl4CDboj4THHobdDI.png"
-  },
   "cbn": {
     "src": "/h2hr-brand-logos/cbn.png",
     "alt": "Logo CBN",
@@ -545,16 +539,16 @@
     "sourcePage": "https://www.bankbanten.co.id/",
     "assetUrl": "https://www.bankbanten.co.id/assets/uploads/2026/08/1_LOGO-Baru-Bank-Banten_2026.png"
   },
-  "bank ntb": {
-    "src": "/h2hr-brand-logos/bank-ntb.ico",
-    "alt": "Logo Bank NTB",
-    "sourcePage": "https://www.bankntbsyariah.co.id/",
-    "assetUrl": "https://www.bankntbsyariah.co.id/assets/img/favicon.ico"
-  },
   "sakuku": {
     "src": "/h2hr-brand-logos/sakuku.jpg",
     "alt": "Logo Sakuku",
     "sourcePage": "https://apps.apple.com/id/app/sakuku/id965131157",
     "assetUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/03/e6/c4/03e6c489-0237-16fe-489a-78e6bcb94b55/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg"
+  },
+  "motionpay": {
+    "src": "/h2hr-brand-logos/motionpay.ico",
+    "alt": "Logo MotionPay",
+    "sourcePage": "https://www.motionpay.id/",
+    "assetUrl": "https://storage.googleapis.com/motion-web/image/motionpay.ico"
   }
 }

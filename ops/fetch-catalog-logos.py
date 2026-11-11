@@ -12,14 +12,14 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1] / "pulsa-fe"
 OVERRIDES = {
     "Sakuku": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/03/e6/c4/03e6c489-0237-16fe-489a-78e6bcb94b55/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg",
-    "MotionPay": "https://storage.googleapis.com/motion-web/navbar_logo/sw1taiDvnl4CDboj4THHobdDI.png",
+    "MotionPay": "https://storage.googleapis.com/motion-web/image/motionpay.ico",
     "Neo Commerce": "https://www-cms.bankneo.co.id/storage/photos/1/logo/logo_bnc.png",
     "CBN": "https://storage.cybiteam.id/assets.cbn.id/CBN_logo_mobile_1_924aa593b8.png",
     "Bank Banten": "https://www.bankbanten.co.id/assets/uploads/2026/08/1_LOGO-Baru-Bank-Banten_2026.png",
     "Bank NTB": "https://www.bankntbsyariah.co.id/assets/img/favicon.ico",
 }
 # Visually reviewed: these were hosting, social-network, or publisher marks, not the named brand.
-REJECTED = {"myrepublic", "bank mnc", "identity v", "fc mobile", "dragon raja", "tix id", "speed drifters"}
+REJECTED = {"myrepublic", "bank mnc", "identity v", "fc mobile", "dragon raja", "tix id", "speed drifters", "bank ntb"}
 SITES = {
     "Sakuku": "https://apps.apple.com/id/app/sakuku/id965131157",
     "MotionPay": "https://www.motionpay.id/",
