@@ -59,20 +59,21 @@ func Routes(d Deps) http.Handler {
 	})
 
 	internalrouter.ProviderCallbackRouter(mux, internalrouter.ProviderCallbackDeps{
-		DB:       d.DB,
-		JPClient: d.JP,
-		YSClient: d.YS,
-		TLClient: d.TL,
-		MKClient: d.MK,
-		SGClient: d.SG,
-		MNClient: d.MN,
-		TRClient: d.TR,
-		AJClient: d.AJ,
-		GMClient: d.GM,
-		SMClient: d.SM,
-		LBClient: d.LB,
-		CHClient: d.CH,
-		RJClient: d.RJ,
+		P24Client: d.P24,
+		DB:        d.DB,
+		JPClient:  d.JP,
+		YSClient:  d.YS,
+		TLClient:  d.TL,
+		MKClient:  d.MK,
+		SGClient:  d.SG,
+		MNClient:  d.MN,
+		TRClient:  d.TR,
+		AJClient:  d.AJ,
+		GMClient:  d.GM,
+		SMClient:  d.SM,
+		LBClient:  d.LB,
+		CHClient:  d.CH,
+		RJClient:  d.RJ,
 	})
 	internalrouter.AppOrderPaymentRouter(mux, d.DB, d.YS, d.GM, d.P24)
 

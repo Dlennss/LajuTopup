@@ -57,7 +57,7 @@ export function UserTransactionHistoryList({
     (serverItems: UserAppOrder[]) => {
       const localOrders = readLocalOrders();
       const seen = new Set<string>();
-      return [...localOrders, ...serverItems]
+      return [...serverItems, ...localOrders]
         .filter((item) => {
           if (!item?.invoice_id || seen.has(item.invoice_id)) return false;
           seen.add(item.invoice_id);
@@ -78,6 +78,47 @@ export function UserTransactionHistoryList({
       containerRef.current.scrollTop = 0;
     }
   }, [initialHasNextPage, initialItems, mergeLocalOrders, status]);
+
+  const pendingInvoices = items
+    .filter((item) => item.status === "processing_provider")
+    .slice(0, PAGE_SIZE)
+    .map((item) => item.invoice_id)
+    .join("|");
+
+  useEffect(() => {
+    if (!pendingInvoices || !authToken) return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = async () => {
+      try {
+        if (document.visibilityState !== "hidden") {
+          const updates = await Promise.all(pendingInvoices.split("|").map(async (invoiceId) => {
+            const res = await fetch(`/api/app/orders/${encodeURIComponent(invoiceId)}`, {
+              headers: { Authorization: `Bearer ${authToken}` },
+              cache: "no-store",
+              signal: controller.signal,
+            });
+            const json = await res.json() as { ok?: boolean; item?: UserAppOrder };
+            return res.ok && json.ok && json.item?.invoice_id === invoiceId ? json.item : null;
+          }));
+          if (!controller.signal.aborted) {
+            const byInvoice = new Map(updates.filter((item): item is UserAppOrder => item !== null)
+              .map((item) => [item.invoice_id, item]));
+            setItems((current) => current.map((item) => byInvoice.get(item.invoice_id) || item));
+          }
+        }
+      } catch {
+        // Keep the last verified status when the connection is unavailable.
+      } finally {
+        if (!controller.signal.aborted) timer = setTimeout(refresh, 15000);
+      }
+    };
+    timer = setTimeout(refresh, 15000);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [authToken, pendingInvoices]);
 
   const loadPage = useCallback(
     async (nextPage: number) => {
@@ -113,7 +154,7 @@ export function UserTransactionHistoryList({
         setIsLoading(false);
       }
     },
-    [authToken, hasNextPage, isLoading, status],
+    [authToken, hasNextPage, isLoading, mergeLocalOrders, status],
   );
 
   const handleEnableAutoLoad = useCallback(async () => {

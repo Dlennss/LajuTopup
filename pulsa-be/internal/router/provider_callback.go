@@ -9,6 +9,7 @@ import (
 	"pulsa2/gemilang"
 	"pulsa2/internal/controller"
 	"pulsa2/internal/helper"
+	"pulsa2/internal/provider"
 	"pulsa2/internal/repository"
 	"pulsa2/internal/service"
 	"pulsa2/javapay"
@@ -24,26 +25,28 @@ import (
 )
 
 type ProviderCallbackDeps struct {
-	DB       *sql.DB
-	JPClient *javapay.Client
-	YSClient *yuscom.Client
-	TLClient *talenta.Client
-	MKClient *multikom.Client
-	SGClient *sagaramobile.Client
-	MNClient *minions.Client
-	TRClient *trionik.Client
-	AJClient *ajs.Client
-	GMClient *gemilang.Client
-	SMClient *smb.Client
-	LBClient *loketbayar.Client
-	CHClient *chytron.Client
-	RJClient *rajabiller.Client
+	P24Client provider.Client
+	DB        *sql.DB
+	JPClient  *javapay.Client
+	YSClient  *yuscom.Client
+	TLClient  *talenta.Client
+	MKClient  *multikom.Client
+	SGClient  *sagaramobile.Client
+	MNClient  *minions.Client
+	TRClient  *trionik.Client
+	AJClient  *ajs.Client
+	GMClient  *gemilang.Client
+	SMClient  *smb.Client
+	LBClient  *loketbayar.Client
+	CHClient  *chytron.Client
+	RJClient  *rajabiller.Client
 }
 
 func ProviderCallbackRouter(mux *http.ServeMux, deps ProviderCallbackDeps) {
 	repo := repository.NewProviderCallbackRepository(deps.DB)
 	svc := service.NewProviderCallbackService(repo, deps.JPClient, deps.YSClient, deps.TLClient, deps.MKClient, deps.SGClient, deps.MNClient, deps.TRClient, deps.AJClient, deps.GMClient, deps.SMClient, deps.LBClient, deps.CHClient, deps.RJClient)
 	ctrl := controller.NewProviderCallbackController(svc)
+	startPulsa24JamOrderStatusSync(deps.DB, deps.P24Client, svc)
 
 	mux.HandleFunc("/v1/webhook/javapay", helper.ProviderIPGuard("javapay", ctrl.CallbackJavapay))
 	mux.HandleFunc("/v1/webhook/yuscom", helper.ProviderIPGuard("yuscom", ctrl.CallbackYuscom))
@@ -60,6 +63,10 @@ func ProviderCallbackRouter(mux *http.ServeMux, deps ProviderCallbackDeps) {
 	mux.HandleFunc("/v1/webhook/chytron", helper.ProviderIPGuard("chytron", ctrl.CallbackChytron))
 	mux.HandleFunc("/v1/webhook/rajabiller", helper.ProviderIPGuard("rajabiller", ctrl.CallbackRajabiller))
 	mux.HandleFunc("/v1/webhook/pulsa24jam", helper.ProviderIPGuard("pulsa24jam", ctrl.CallbackPulsa24Jam))
+	mux.HandleFunc("/v1/webhooks/pulsa24jam", helper.ProviderIPGuard("pulsa24jam", ctrl.CallbackPulsa24Jam))
+	mux.HandleFunc("/webhooks/pulsa24jam", helper.ProviderIPGuard("pulsa24jam", ctrl.CallbackPulsa24Jam))
+	mux.HandleFunc("/api/v1/webhooks/pulsa24jam", helper.ProviderIPGuard("pulsa24jam", ctrl.CallbackPulsa24Jam))
+	mux.HandleFunc("/api/v1/webhook/pulsa24jam", helper.ProviderIPGuard("pulsa24jam", ctrl.CallbackPulsa24Jam))
 
 	mux.HandleFunc("/webhook/javapay", helper.ProviderIPGuard("javapay", ctrl.CallbackJavapay))
 	mux.HandleFunc("/webhook/yuscom", helper.ProviderIPGuard("yuscom", ctrl.CallbackYuscom))
