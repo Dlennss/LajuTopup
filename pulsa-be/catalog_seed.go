@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-//go:embed sql/20260921_seed_pulsa24jam_h2hr_dashboard_products.sql
+//go:embed sql/20261111_seed_pulsa24jam_h2hr_dashboard_products.sql
 var pulsa24JamCatalogSeedFS embed.FS
 
-const pulsa24JamCatalogSeedPath = "sql/20260921_seed_pulsa24jam_h2hr_dashboard_products.sql"
+const pulsa24JamCatalogSeedPath = "sql/20261111_seed_pulsa24jam_h2hr_dashboard_products.sql"
 
 func applyPulsa24JamCatalogSeed(db *sql.DB) {
 	if strings.EqualFold(strings.TrimSpace(os.Getenv("PULSA24JAM_CATALOG_SEED_AUTO_SYNC")), "false") {

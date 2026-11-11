@@ -71,14 +71,14 @@ func TestResolvePulsa24JamAppRequest(t *testing.T) {
 		wantQty     int64
 	}{
 		{
-			name:        "fixed dana uses open amount route",
+			name:        "fixed dana preserves selected SKU",
 			order:       repository.AppOrderRow{ProdukSKUSnapshot: "UDDND10", ProdukNamaSnapshot: "Dana 10.000", Qty: 1, HargaDasar: 11055},
-			wantProduct: "DANA", wantQty: 10000,
+			wantProduct: "UDDND10", wantQty: 1,
 		},
 		{
-			name:        "fixed gopay uses open amount route",
+			name:        "fixed gopay preserves selected SKU",
 			order:       repository.AppOrderRow{ProdukSKUSnapshot: "UDGP10", ProdukNamaSnapshot: "Gopay 10.000", Qty: 1, HargaDasar: 11650},
-			wantProduct: "GOPAY", wantQty: 10000,
+			wantProduct: "UDGP10", wantQty: 1,
 		},
 		{
 			name:        "gopay driver keeps dedicated route",
@@ -134,6 +134,7 @@ func TestResolvePulsa24JamAppDest(t *testing.T) {
 }
 
 func TestPulsa24JamAppOrderRefIDFitsH2HRLimit(t *testing.T) {
+	t.Setenv("PULSA24JAM_APP_REF_NAMESPACE", "")
 	got := pulsa24JamAppOrderRefID(&repository.AppOrderRow{
 		ID:        81,
 		InvoiceID: "INV-20260921170504-F95D2B50",
@@ -147,11 +148,38 @@ func TestPulsa24JamAppOrderRefIDFitsH2HRLimit(t *testing.T) {
 }
 
 func TestPulsa24JamAppOrderRefIDFallbackFitsH2HRLimit(t *testing.T) {
+	t.Setenv("PULSA24JAM_APP_REF_NAMESPACE", "")
 	got := pulsa24JamAppOrderRefID(&repository.AppOrderRow{InvoiceID: "INV-20260921170504-F95D2B50"})
 	if len(got) > 20 {
 		t.Fatalf("refid length = %d, want <= 20: %s", len(got), got)
 	}
 	if got[:3] != "PKA" {
 		t.Fatalf("refid = %q, want PKA prefix", got)
+	}
+}
+
+func TestPulsa24JamAppOrderRefNamespace(t *testing.T) {
+	order := &repository.AppOrderRow{ID: 9223372036854775807}
+	t.Setenv("PULSA24JAM_APP_REF_NAMESPACE", "new-installation")
+	first := pulsa24JamAppOrderRefID(order)
+	if len(first) > 20 || first != pulsa24JamAppOrderRefID(order) {
+		t.Fatalf("invalid or unstable reference: %s", first)
+	}
+	t.Setenv("PULSA24JAM_APP_REF_NAMESPACE", "other-installation")
+	if first == pulsa24JamAppOrderRefID(order) {
+		t.Fatal("references collide across installations")
+	}
+}
+
+func TestH2HRBillingInquiryRequired(t *testing.T) {
+	for _, category := range []string{"Asuransi", "BPJS", "Internet & Telco", "Multifinance", "Pajak Daerah", "Pascabayar", "Pembayaran", "Samsat", "Tagihan Air", "Tagihan Gas"} {
+		if !requiresH2HRBillingInquiry(&repository.ProdukRow{KategoriNama: category}) {
+			t.Fatalf("inquiry required: %s", category)
+		}
+	}
+	for _, category := range []string{"Pulsa", "Paket Data", "E-Wallet", "E-Money", "Game", "Bank Transfer"} {
+		if requiresH2HRBillingInquiry(&repository.ProdukRow{KategoriNama: category}) {
+			t.Fatalf("not a bill: %s", category)
+		}
 	}
 }

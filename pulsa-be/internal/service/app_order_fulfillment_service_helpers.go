@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
-	"regexp"
+	"os"
 	"strconv"
 	"strings"
 
@@ -11,8 +12,6 @@ import (
 	providerpkg "pulsa2/internal/provider"
 	"pulsa2/internal/repository"
 )
-
-var pulsa24JamFixedWalletAmountPattern = regexp.MustCompile(`([0-9]+)$`)
 
 func (s *AppOrderFulfillmentService) handleFailedOrder(ctx context.Context, order *repository.AppOrderRow, providerTrxID int64, msg, reasonPrefix string) error {
 	if order == nil {
@@ -107,35 +106,18 @@ func resolvePulsa24JamAppRequest(providerProductCode string, order *repository.A
 	if qty <= 0 {
 		qty = 1
 	}
-	if qty != 1 {
-		return providerProductCode, qty
-	}
+	return providerProductCode, qty
+}
 
-	sku := strings.ToUpper(strings.TrimSpace(order.ProdukSKUSnapshot))
-	name := strings.ToUpper(strings.TrimSpace(order.ProdukNamaSnapshot))
-	genericCode := ""
-	switch {
-	case strings.HasPrefix(sku, "UDDND") && strings.Contains(name, "DANA"):
-		genericCode = "DANA"
-	case (strings.HasPrefix(sku, "UDGP") || strings.HasPrefix(sku, "UDGY")) && strings.Contains(name, "GOPAY") && !strings.Contains(name, "DRIVER"):
-		genericCode = "GOPAY"
-	default:
-		return providerProductCode, qty
+func requiresH2HRBillingInquiry(product *repository.ProdukRow) bool {
+	if product == nil {
+		return false
 	}
-
-	match := pulsa24JamFixedWalletAmountPattern.FindStringSubmatch(sku)
-	if len(match) != 2 {
-		return providerProductCode, qty
+	switch strings.ToLower(strings.TrimSpace(product.KategoriNama)) {
+	case "asuransi", "bpjs", "internet & telco", "multifinance", "pajak daerah", "pascabayar", "pembayaran", "samsat", "tagihan air", "tagihan gas":
+		return true
 	}
-	thousands, err := strconv.ParseInt(match[1], 10, 64)
-	if err != nil || thousands <= 0 {
-		return providerProductCode, qty
-	}
-	amount := thousands * 1000
-	if amount <= 0 || (order.HargaDasar > 0 && amount >= order.HargaDasar) {
-		return providerProductCode, qty
-	}
-	return genericCode, amount
+	return strings.Contains(strings.ToUpper(product.Nama), "PASCABAYAR")
 }
 
 func resolvePulsa24JamAppDest(order *repository.AppOrderRow) string {
@@ -165,8 +147,14 @@ func pulsa24JamAppProductUsesNominalAtDest(order *repository.AppOrderRow) bool {
 }
 
 func pulsa24JamAppOrderRefID(order *repository.AppOrderRow) string {
+	prefix := "PKA"
+	// A fresh database must not reuse order references from an older installation.
+	if namespace := strings.TrimSpace(os.Getenv("PULSA24JAM_APP_REF_NAMESPACE")); namespace != "" {
+		hash := sha256.Sum256([]byte(namespace))
+		prefix = fmt.Sprintf("L%X", hash[:3])
+	}
 	if order != nil && order.ID > 0 {
-		return "PKA" + strings.ToUpper(strconv.FormatInt(order.ID, 36))
+		return prefix + strings.ToUpper(strconv.FormatInt(order.ID, 36))
 	}
 
 	invoice := ""
@@ -186,12 +174,12 @@ func pulsa24JamAppOrderRefID(order *repository.AppOrderRow) string {
 		}
 	}, invoice)
 	if invoice == "" {
-		return "PKA"
+		return prefix
 	}
-	if len(invoice) > 17 {
-		invoice = invoice[len(invoice)-17:]
+	if len(invoice) > 20-len(prefix) {
+		invoice = invoice[len(invoice)-(20-len(prefix)):]
 	}
-	return "PKA" + invoice
+	return prefix + invoice
 }
 
 func appOrderProviderLooksLikeAccepted(provider, body string) bool {

@@ -51,5 +51,5 @@ export function getGuestCategoryPathById(id: string) {
 }
 
 export function getGuestCategoryPath(item: Pick<UserCategoryItem, "id" | "nama">) {
-  return CATEGORY_ROUTE_BY_NAME[normalizeName(item.nama)] ?? getGuestCategoryPathById(String(item.id)) ?? `/kategori/${item.id}?name=${encodeURIComponent(item.nama)}`;
+  return `/kategori/${item.id}`;
 }

@@ -76,7 +76,14 @@ function pathFor(key: string, variant: "user" | "guest") {
     case "ewallet":
       return isUser ? "/user/ewallet" : "/ewallet";
     case "tagihan":
-      return isUser ? "/user/listrik/tagihan" : "/listrik/tagihan";
+      return `${isUser ? "/user" : ""}/kategori?layanan=Pembayaran`;
+    case "game":
+    case "tv":
+    case "pdam":
+      return `${isUser ? "/user" : ""}/kategori?layanan=${key}`;
+    case "telkom":
+    case "internet":
+      return `${isUser ? "/user" : ""}/kategori?layanan=internet-wifi`;
     default:
       return isUser ? "/user/kategori" : "/kategori";
   }

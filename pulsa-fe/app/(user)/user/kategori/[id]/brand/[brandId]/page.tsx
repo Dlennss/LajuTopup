@@ -9,6 +9,7 @@ import { EMoneyBrandFlow } from "@/components/shared/EMoneyBrandFlow";
 import { GuestPulsaQuickOrder } from "@/components/guest/GuestPulsaQuickOrder";
 import { GuestPaketDataQuickOrder } from "@/components/guest/GuestPaketDataQuickOrder";
 import { RetailBillingEntryFlow } from "@/components/shared/RetailBillingEntryFlow";
+import { isH2HRBillingCategory } from "@/lib/h2hr-categories";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -36,7 +37,7 @@ export default async function UserBrandProductsPage({ params }: PageProps) {
   const isDataCategory = String(categoryName).toUpperCase().includes("DATA");
   const normalizedCategoryName = String(categoryName).toUpperCase();
   const isWalletCategory = normalizedCategoryName.includes("E-WALLET") || normalizedCategoryName.includes("E-MONEY");
-  const isBillingCategory = !isWalletCategory && ["7", "11", "17", "18", "20"].includes(String(id));
+  const isBillingCategory = isH2HRBillingCategory(categoryName);
   const billingPlaceholder = id === "11"
     ? "Masukkan ID pelanggan / nomor meter"
     : id === "17"
@@ -57,8 +58,8 @@ export default async function UserBrandProductsPage({ params }: PageProps) {
             <div className="grid min-h-40 place-items-center rounded-3xl border border-dashed border-slate-200 bg-white px-4 text-center text-sm text-slate-500 shadow-[0_8px_22px_rgba(15,23,42,0.13)]">
               Belum ada produk aktif untuk brand ini.
             </div>
-          ) : id === "19" && brandId === "171" ? (
-            <BPJSBrandFlow items={products} authToken={backendToken} buyerRole={buyerRole} />
+          ) : normalizedCategoryName === "BPJS" ? (
+            <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           ) : isDataCategory ? (
             <GuestPaketDataQuickOrder
               kategoriId={String(id)}
@@ -68,9 +69,9 @@ export default async function UserBrandProductsPage({ params }: PageProps) {
               forcedBrand={{ id: Number(brandId), nama: brand, aktif: true }}
               brandHrefPrefix="/user/kategori"
             />
-          ) : id === "2" || isWalletCategory ? (
+          ) : isWalletCategory ? (
             <EMoneyBrandFlow items={products} isLoggedIn={isLoggedIn} authToken={backendToken} mode="user" buyerRole={buyerRole} />
-          ) : id === "1" ? (
+          ) : normalizedCategoryName === "PULSA" ? (
             <GuestPulsaQuickOrder
               kategoriId={String(id)}
               brands={[]}
@@ -79,15 +80,7 @@ export default async function UserBrandProductsPage({ params }: PageProps) {
               forcedBrand={{ id: Number(brandId), nama: brand, aktif: true }}
             />
           ) : isBillingCategory ? (
-            <RetailBillingEntryFlow
-              title={categoryName || brand}
-              description={billingDescription}
-              placeholder={billingPlaceholder}
-              items={products}
-              mode="user"
-              authToken={backendToken}
-              buyerRole={buyerRole}
-            />
+            <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           ) : (
             <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           )}

@@ -1,45 +1,20 @@
 import { getAppServerSession } from "@/lib/server-auth";
-import type { UserSession } from "@/components/user/types";
 import { UserBottomNav } from "@/components/user/UserBottomNav";
-import { UserAuthClientSync } from "@/components/user/UserAuthClientSync";
+import { H2HRCatalogBrands } from "@/components/shared/H2HRCatalogBrands";
 import { ServiceDirectory } from "@/components/shared/ServiceDirectory";
-import { UserUniversalServicePageContent } from "@/components/user/UserUniversalServicePageContent";
+import { getCategories } from "@/lib/api.products";
+import type { UserCategoryItem } from "@/components/user/types";
+import { UserAuthClientSync } from "@/components/user/UserAuthClientSync";
 
-type SessionShape = {
-  user?: UserSession;
-  backendToken?: string;
-};
+export const dynamic = "force-dynamic";
 
-type PageProps = {
-  searchParams?: Promise<{ layanan?: string }>;
-};
-
-export default async function UserAllCategoryPage({ searchParams }: PageProps) {
-  const session = (await getAppServerSession()) as SessionShape | null;
-  const backendToken = session?.backendToken;
-  const role = String(session?.user?.role || "").trim().toLowerCase();
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const serviceSlug = String(resolvedSearchParams?.layanan || "").trim().toLowerCase();
-
-  if (serviceSlug) {
-    return (
-      <>
-        {backendToken ? <UserAuthClientSync backendToken={backendToken} /> : null}
-        <UserUniversalServicePageContent serviceSlug={serviceSlug} />
-        <UserBottomNav />
-      </>
-    );
-  }
-
-  return (
-    <main className="bg-sky-50">
-      {backendToken ? <UserAuthClientSync backendToken={backendToken} /> : null}
-
-      <div className="space-y-4 px-4 pt-4">
-        <ServiceDirectory mode="user" role={role} />
-      </div>
-
-      <UserBottomNav />
-    </main>
-  );
+export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ layanan?: string }> }) {
+  const session = await getAppServerSession();
+  const token = (session as { backendToken?: string } | null)?.backendToken;
+  const key = (await searchParams).layanan;
+  return <main className="min-h-screen bg-zinc-50">
+    {token ? <UserAuthClientSync backendToken={token} /> : null}
+    {key ? <H2HRCatalogBrands categoryKey={key} mode="user" /> : <div className="px-4 py-4"><ServiceDirectory categories={await getCategories() as UserCategoryItem[]} mode="user" /></div>}
+    <UserBottomNav />
+  </main>;
 }

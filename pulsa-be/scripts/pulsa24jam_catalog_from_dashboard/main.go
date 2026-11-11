@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -26,7 +27,7 @@ var priceLinePattern = regexp.MustCompile(`^(?:\+\s*)?Rp\s*([0-9.]+)$`)
 
 func main() {
 	log.SetFlags(0)
-	if len(os.Args) != 3 {
+	if len(os.Args) != 3 && len(os.Args) != 4 {
 		log.Fatal("usage: go run ./scripts/pulsa24jam_catalog_from_dashboard <pasted-text.txt> <output.sql>")
 	}
 
@@ -39,8 +40,17 @@ func main() {
 	}
 
 	products := parseDashboardProducts(lines)
-	if len(products) == 0 {
-		log.Fatal("no Pulsa24Jam products parsed")
+	if err := validateProducts(lines, products); err != nil {
+		log.Fatal(err)
+	}
+	if len(os.Args) == 4 {
+		data, err := json.Marshal(products)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := os.WriteFile(os.Args[3], data, 0o600); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if err := writeMigration(outputPath, products); err != nil {
@@ -110,7 +120,7 @@ func parseDashboardProducts(lines []string) []productRow {
 		i--
 	}
 
-	return dedupeProducts(products)
+	return products
 }
 
 func appendUsefulHeading(headings []string, value string) []string {
@@ -188,15 +198,21 @@ func parseProductRow(lines []string, start int, category, brand string) (product
 	priceType := "FIXED"
 	var maxNominal string
 	var price int64
+	var group string
+	foundPrice := false
 	i := start + 2
 	for ; i < len(lines); i++ {
 		line := strings.TrimSpace(lines[i])
+		if i == start+2 && line != "-" && line != "FIXED" && !strings.HasPrefix(line, "OPEN_AMOUNT") {
+			group = line
+		}
 		if strings.HasPrefix(strings.ToUpper(line), "OPEN_AMOUNT") {
 			priceType = "OPEN_AMOUNT"
 			maxNominal = parseMaximumNominal(line)
 		}
 		if amount, ok := parsePriceLine(line); ok {
 			price = amount
+			foundPrice = true
 			i++
 			break
 		}
@@ -204,7 +220,7 @@ func parseProductRow(lines []string, start int, category, brand string) (product
 			return productRow{}, start, false
 		}
 	}
-	if price == 0 && priceType != "OPEN_AMOUNT" {
+	if !foundPrice {
 		return productRow{}, start, false
 	}
 
@@ -213,7 +229,7 @@ func parseProductRow(lines []string, start int, category, brand string) (product
 		Brand:          brand,
 		SKU:            sku,
 		Name:           name,
-		GroupName:      category,
+		GroupName:      group,
 		PriceType:      priceType,
 		Price:          price,
 		MaximumNominal: maxNominal,
@@ -222,16 +238,55 @@ func parseProductRow(lines []string, start int, category, brand string) (product
 
 func normalizeSKU(value string) string {
 	value = strings.ToUpper(strings.TrimSpace(value))
-	value = strings.ReplaceAll(value, " ", "")
 	return value
 }
 
 func normalizeMasterName(value string) string {
 	value = strings.Join(strings.Fields(strings.TrimSpace(value)), " ")
-	if strings.EqualFold(value, "shopee") {
-		return "ShopeePay"
-	}
 	return value
+}
+
+func validateProducts(lines []string, products []productRow) error {
+	if len(products) == 0 {
+		return fmt.Errorf("no Pulsa24Jam products parsed")
+	}
+	seen := map[string]bool{}
+	fixed := 0
+	for _, p := range products {
+		if seen[p.SKU] {
+			return fmt.Errorf("duplicate SKU: %s", p.SKU)
+		}
+		seen[p.SKU] = true
+		if p.PriceType == "FIXED" {
+			fixed++
+		}
+	}
+	prices := 0
+	for i, line := range lines {
+		if _, ok := parsePriceLine(line); ok {
+			prices++
+		}
+		expected := -1
+		switch strings.ToLower(line) {
+		case "total produk aktif":
+			expected = len(products)
+		case "produk dengan harga tetap":
+			expected = fixed
+		}
+		if expected >= 0 {
+			if i+1 >= len(lines) {
+				return fmt.Errorf("missing count after %s", line)
+			}
+			count, err := strconv.Atoi(strings.ReplaceAll(lines[i+1], ".", ""))
+			if err != nil || count != expected {
+				return fmt.Errorf("%s: parsed %d, declared %s", line, expected, lines[i+1])
+			}
+		}
+	}
+	if prices != len(products) {
+		return fmt.Errorf("parsed %d products but found %d prices", len(products), prices)
+	}
+	return nil
 }
 
 func parseMaximumNominal(value string) string {
@@ -256,23 +311,6 @@ func parsePriceLine(value string) (int64, bool) {
 	return amount, err == nil
 }
 
-func dedupeProducts(products []productRow) []productRow {
-	seen := make(map[string]int, len(products))
-	out := make([]productRow, 0, len(products))
-	for _, item := range products {
-		if item.SKU == "" {
-			continue
-		}
-		if idx, ok := seen[item.SKU]; ok {
-			out[idx] = item
-			continue
-		}
-		seen[item.SKU] = len(out)
-		out = append(out, item)
-	}
-	return out
-}
-
 func writeMigration(path string, products []productRow) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
@@ -284,7 +322,6 @@ func writeMigration(path string, products []productRow) error {
 	defer file.Close()
 
 	w := bufio.NewWriterSize(file, 1024*1024)
-	defer w.Flush()
 
 	fmt.Fprintln(w, "-- Generated from Pulsa24Jam H2HR dashboard export.")
 	fmt.Fprintln(w, "-- Re-run safe: refreshes the app catalog so active retail products are Pulsa24Jam H2HR only.")
@@ -411,7 +448,7 @@ func writeMigration(path string, products []productRow) error {
 	fmt.Fprintln(w, "INSERT INTO public.produk")
 	fmt.Fprintln(w, "  (sku, nama, group_name, kategori_id, brand_id, tipe_harga, nominal, maksimal_nominal, jam_buka, jam_tutup, aktif, dibuat_pada, diubah_pada)")
 	fmt.Fprintln(w, "SELECT seed.sku, seed.product_name, seed.group_name, k.id, b.id, seed.price_type,")
-	fmt.Fprintln(w, "       CASE WHEN seed.price_type = 'FIXED' THEN seed.price ELSE NULL END,")
+	fmt.Fprintln(w, "       NULL,")
 	fmt.Fprintln(w, "       seed.maximum_nominal, '00:00', '23:59', true, now(), now()")
 	fmt.Fprintln(w, "FROM p24_h2hr_seed_unique seed")
 	fmt.Fprintln(w, "JOIN LATERAL (")
@@ -474,7 +511,7 @@ func writeMigration(path string, products []productRow) error {
 	fmt.Fprintln(w, "  diubah_pada = now();")
 	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "COMMIT;")
-	return nil
+	return w.Flush()
 }
 
 func sqlQuote(value string) string {

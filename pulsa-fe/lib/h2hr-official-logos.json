@@ -1,0 +1,560 @@
+{
+  "kaspro": {
+    "src": "/h2hr-brand-logos/kaspro.png",
+    "alt": "Logo KasPro",
+    "sourcePage": "https://kaspro.id/",
+    "assetUrl": "https://kaspro.id/style/images/favicon.png"
+  },
+  "grab": {
+    "src": "/h2hr-brand-logos/grab.ico",
+    "alt": "Logo Grab",
+    "sourcePage": "https://www.grab.com/id/",
+    "assetUrl": "https://www.grab.com/favicon.ico"
+  },
+  "maxim": {
+    "src": "/h2hr-brand-logos/maxim.png",
+    "alt": "Logo Maxim",
+    "sourcePage": "https://id.taximaxim.com/",
+    "assetUrl": "https://id.taximaxim.com/favicon180x180.png"
+  },
+  "bstation": {
+    "src": "/h2hr-brand-logos/bstation.webp",
+    "alt": "Logo Bstation",
+    "sourcePage": "https://www.bilibili.tv/",
+    "assetUrl": "https://p.bstarstatic.com/fe-lib/images/web/share-cover.png@1200w_630h_1e_1c_1f.webp"
+  },
+  "vidio": {
+    "src": "/h2hr-brand-logos/vidio.ico",
+    "alt": "Logo Vidio",
+    "sourcePage": "https://www.vidio.com/",
+    "assetUrl": "https://www.vidio.com/_static/icons/favicon.ico"
+  },
+  "wetv": {
+    "src": "/h2hr-brand-logos/wetv.png",
+    "alt": "Logo WeTV",
+    "sourcePage": "https://wetv.vip/",
+    "assetUrl": "https://wetv.vip/apple-touch-icon.png"
+  },
+  "bein sports": {
+    "src": "/h2hr-brand-logos/bein-sports.png",
+    "alt": "Logo beIN Sports",
+    "sourcePage": "https://www.beinsports.com/",
+    "assetUrl": "https://www.beinsports.com/favicon/apple-icon-114x114.png"
+  },
+  "tiktok coins": {
+    "src": "/h2hr-brand-logos/tiktok-coins.png",
+    "alt": "Logo TIKTOK COINS",
+    "sourcePage": "https://www.tiktok.com/",
+    "assetUrl": "https://www.tiktok.com/favicon.ico"
+  },
+  "oxygen": {
+    "src": "/h2hr-brand-logos/oxygen.png",
+    "alt": "Logo Oxygen",
+    "sourcePage": "https://oxygen.id/",
+    "assetUrl": "https://www.oxygen.id/public/assets/favicon/apple-touch-icon.png"
+  },
+  "globalxtreme": {
+    "src": "/h2hr-brand-logos/globalxtreme.png",
+    "alt": "Logo GlobalXtreme",
+    "sourcePage": "https://www.globalxtreme.net/",
+    "assetUrl": "https://globalxtreme.net/images/logo/favicon.png"
+  },
+  "bnetfit": {
+    "src": "/h2hr-brand-logos/bnetfit.jpg",
+    "alt": "Logo Bnetfit",
+    "sourcePage": "https://bnetfit.com/",
+    "assetUrl": "https://bnetfit.id/favicon-32x32new.jpg?v=2026"
+  },
+  "allo bank": {
+    "src": "/h2hr-brand-logos/allo-bank.png",
+    "alt": "Logo Allo Bank",
+    "sourcePage": "https://www.allobank.com/",
+    "assetUrl": "https://www.allobank.com/assets/favicon.png"
+  },
+  "bank aladin syariah": {
+    "src": "/h2hr-brand-logos/bank-aladin-syariah.png",
+    "alt": "Logo Bank Aladin Syariah",
+    "sourcePage": "https://aladinbank.id/",
+    "assetUrl": "https://aladinbank.id/themes/aladin/assets/favicon/apple-icon-114x114.png"
+  },
+  "blu (bca digital)": {
+    "src": "/h2hr-brand-logos/blu--bca-digital.png",
+    "alt": "Logo Blu (BCA Digital)",
+    "sourcePage": "https://blubybcadigital.id/",
+    "assetUrl": "https://blubybcadigital.id/favicon.png"
+  },
+  "sea bank": {
+    "src": "/h2hr-brand-logos/sea-bank.png",
+    "alt": "Logo Sea Bank",
+    "sourcePage": "https://www.seabank.co.id/",
+    "assetUrl": "https://banking-aka-storage.seabank.co.id/seabank/id/live/www/live/static/20261111/13_27_59_ed3pe2/id/favicon-id.png"
+  },
+  "bank jateng": {
+    "src": "/h2hr-brand-logos/bank-jateng.png",
+    "alt": "Logo Bank Jateng",
+    "sourcePage": "https://www.bankjateng.co.id/",
+    "assetUrl": "https://www.bankjateng.co.id/media/icon_bank_jateng.png"
+  },
+  "bank dbs": {
+    "src": "/h2hr-brand-logos/bank-dbs.ico",
+    "alt": "Logo Bank DBS",
+    "sourcePage": "https://www.dbs.id/",
+    "assetUrl": "https://www.dbs.id/id/_next/public/favicon.ico"
+  },
+  "mega": {
+    "src": "/h2hr-brand-logos/mega.png",
+    "alt": "Logo Mega",
+    "sourcePage": "https://bankmega.com/",
+    "assetUrl": "https://bankmega.com/static/img/logo-bank-mega-new.png"
+  },
+  "muamalat": {
+    "src": "/h2hr-brand-logos/muamalat.ico",
+    "alt": "Logo Muamalat",
+    "sourcePage": "https://www.bankmuamalat.co.id/",
+    "assetUrl": "https://www.bankmuamalat.co.id/assets/images/logo_bmi.ico"
+  },
+  "sinarmas": {
+    "src": "/h2hr-brand-logos/sinarmas.ico",
+    "alt": "Logo Sinarmas",
+    "sourcePage": "https://www.banksinarmas.com/",
+    "assetUrl": "https://www.banksinarmas.com/favicon.ico"
+  },
+  "hsbc": {
+    "src": "/h2hr-brand-logos/hsbc.png",
+    "alt": "Logo HSBC",
+    "sourcePage": "https://www.hsbc.co.id/",
+    "assetUrl": "https://www.hsbc.co.id/etc.clientlibs/dpws/clientlibs-public/clientlib-site/resources/favicons/apple-touch-icon.png"
+  },
+  "valorant": {
+    "src": "/h2hr-brand-logos/valorant.png",
+    "alt": "Logo VALORANT",
+    "sourcePage": "https://playvalorant.com/",
+    "assetUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/cbf4460132cdfeb2a97fad5f9dd25ba0bc058f76-128x128.png?accountingTag=VAL"
+  },
+  "honkai star rail": {
+    "src": "/h2hr-brand-logos/honkai-star-rail.png",
+    "alt": "Logo HONKAI STAR RAIL",
+    "sourcePage": "https://hsr.hoyoverse.com/",
+    "assetUrl": "https://hsr.hoyoverse.com/favicon.png"
+  },
+  "honkai impact 3": {
+    "src": "/h2hr-brand-logos/honkai-impact-3.png",
+    "alt": "Logo HONKAI IMPACT 3",
+    "sourcePage": "https://honkaiimpact3.hoyoverse.com/",
+    "assetUrl": "https://honkaiimpact3.hoyoverse.com/favicon.ico"
+  },
+  "zenless zone zero": {
+    "src": "/h2hr-brand-logos/zenless-zone-zero.png",
+    "alt": "Logo ZENLESS ZONE ZERO",
+    "sourcePage": "https://zenless.hoyoverse.com/",
+    "assetUrl": "https://zenless.hoyoverse.com/favicon.ico"
+  },
+  "wuthering waves": {
+    "src": "/h2hr-brand-logos/wuthering-waves.ico",
+    "alt": "Logo WUTHERING WAVES",
+    "sourcePage": "https://wutheringwaves.kurogames.com/",
+    "assetUrl": "https://wutheringwaves.kurogames.com/website-preface/favicon.ico"
+  },
+  "hago": {
+    "src": "/h2hr-brand-logos/hago.ico",
+    "alt": "Logo HAGO",
+    "sourcePage": "https://www.hago.sg/",
+    "assetUrl": "https://www.ihago.net/favicon.ico"
+  },
+  "blood strike": {
+    "src": "/h2hr-brand-logos/blood-strike.webp",
+    "alt": "Logo BLOOD STRIKE",
+    "sourcePage": "https://www.blood-strike.com/",
+    "assetUrl": "https://www.blood-strike.com/favicon.ico"
+  },
+  "zepeto": {
+    "src": "/h2hr-brand-logos/zepeto.png",
+    "alt": "Logo ZEPETO",
+    "sourcePage": "https://zepeto.me/",
+    "assetUrl": "https://asset-zepetoful.zepeto.io/He/f0w20tzo7x3G/Hef8c3wK87XuIkmsUN1zlz5/en"
+  },
+  "honor of king": {
+    "src": "/h2hr-brand-logos/honor-of-king.ico",
+    "alt": "Logo HONOR OF KING",
+    "sourcePage": "https://www.honorofkings.com/",
+    "assetUrl": "https://www.honorofkings.com/assets/favicon-CaeYdbfs.ico"
+  },
+  "arena breakout": {
+    "src": "/h2hr-brand-logos/arena-breakout.ico",
+    "alt": "Logo ARENA BREAKOUT",
+    "sourcePage": "https://www.arenabreakout.com/",
+    "assetUrl": "https://www.arenabreakout.com/favicon.ico"
+  },
+  "marvel rivals": {
+    "src": "/h2hr-brand-logos/marvel-rivals.ico",
+    "alt": "Logo MARVEL RIVALS",
+    "sourcePage": "https://www.marvelrivals.com/",
+    "assetUrl": "https://www.marvelrivals.com/pc/gw/20241128194803/691ca74fc8dfda4c11d8.ico"
+  },
+  "marvel snap": {
+    "src": "/h2hr-brand-logos/marvel-snap.jpg",
+    "alt": "Logo MARVEL SNAP",
+    "sourcePage": "https://www.marvelsnap.com/",
+    "assetUrl": "https://d2fstzkj6h0nvg.cloudfront.net/wp-content/uploads/2025/06/06184128/favicon-1-300x300.jpg"
+  },
+  "garena": {
+    "src": "/h2hr-brand-logos/garena.ico",
+    "alt": "Logo Garena",
+    "sourcePage": "https://www.garena.co.id/",
+    "assetUrl": "https://cdngarenanow-a.akamaihd.net/webmain/static/favicon.ico"
+  },
+  "megaxus": {
+    "src": "/h2hr-brand-logos/megaxus.ico",
+    "alt": "Logo MEGAXUS",
+    "sourcePage": "https://www.megaxus.com/",
+    "assetUrl": "https://www.megaxus.com/favicon.ico"
+  },
+  "pokemon unite": {
+    "src": "/h2hr-brand-logos/pokemon-unite.png",
+    "alt": "Logo POKEMON UNITE",
+    "sourcePage": "https://unite.pokemon.com/",
+    "assetUrl": "https://unite.pokemon.com/favicons/apple-touch-icon.png"
+  },
+  "bank aceh": {
+    "src": "/h2hr-brand-logos/bank-aceh.png",
+    "alt": "Logo Bank Aceh",
+    "sourcePage": "https://www.bankaceh.co.id/",
+    "assetUrl": "https://bankaceh.co.id/wp-content/uploads/2024/08/cropped-Logo-Seulanga-300-x-300-180x180.png"
+  },
+  "bank artha graha": {
+    "src": "/h2hr-brand-logos/bank-artha-graha.png",
+    "alt": "Logo Bank Artha Graha",
+    "sourcePage": "https://www.arthagraha.com/",
+    "assetUrl": "https://www.arthagraha.com/assets/42e6931e9aa19a04d2e1785d.png"
+  },
+  "bank ctbc": {
+    "src": "/h2hr-brand-logos/bank-ctbc.png",
+    "alt": "Logo Bank CTBC",
+    "sourcePage": "https://www.ctbcbank.co.id/",
+    "assetUrl": "https://www.ctbcbank.co.id/apple-touch-icon.png"
+  },
+  "bank diy": {
+    "src": "/h2hr-brand-logos/bank-diy.png",
+    "alt": "Logo Bank DIY",
+    "sourcePage": "https://www.bpddiy.co.id/",
+    "assetUrl": "https://www.bpddiy.co.id/static/images/client-logo.png"
+  },
+  "bank ganesha": {
+    "src": "/h2hr-brand-logos/bank-ganesha.png",
+    "alt": "Logo Bank Ganesha",
+    "sourcePage": "https://www.bankganesha.co.id/",
+    "assetUrl": "https://www.bankganesha.co.id/icons/ganesha-icon.png"
+  },
+  "bank ibk": {
+    "src": "/h2hr-brand-logos/bank-ibk.png",
+    "alt": "Logo Bank IBK",
+    "sourcePage": "https://ibk.co.id/",
+    "assetUrl": "https://ibk.co.id/favicon.ico"
+  },
+  "bank ina perdana": {
+    "src": "/h2hr-brand-logos/bank-ina-perdana.ico",
+    "alt": "Logo Bank Ina Perdana",
+    "sourcePage": "https://bankina.co.id/",
+    "assetUrl": "https://bankina.co.id/favicon.ico?favicon.1e0ryxk0tm54x.ico"
+  },
+  "bank index": {
+    "src": "/h2hr-brand-logos/bank-index.png",
+    "alt": "Logo Bank Index",
+    "sourcePage": "https://www.bankindex.co.id/",
+    "assetUrl": "https://www.bankindex.co.id/assets/img/favicon.png"
+  },
+  "bank kalsel": {
+    "src": "/h2hr-brand-logos/bank-kalsel.ico",
+    "alt": "Logo Bank Kalsel",
+    "sourcePage": "https://www.bankkalsel.co.id/",
+    "assetUrl": "https://www.bankkalsel.co.id/favicon.ico"
+  },
+  "bank kalteng": {
+    "src": "/h2hr-brand-logos/bank-kalteng.png",
+    "alt": "Logo Bank Kalteng",
+    "sourcePage": "https://www.bankkalteng.co.id/",
+    "assetUrl": "https://www.bankkalteng.co.id/apple-touch-icon.png"
+  },
+  "bank kaltim": {
+    "src": "/h2hr-brand-logos/bank-kaltim.png",
+    "alt": "Logo Bank Kaltim",
+    "sourcePage": "https://bankaltimtara.co.id/",
+    "assetUrl": "https://www.bankaltimtara.co.id/images/favicon.png"
+  },
+  "bank lampung": {
+    "src": "/h2hr-brand-logos/bank-lampung.ico",
+    "alt": "Logo Bank Lampung",
+    "sourcePage": "https://banklampung.co.id/",
+    "assetUrl": "https://www.banklampung.co.id/favicon.ico"
+  },
+  "bank maluku malut": {
+    "src": "/h2hr-brand-logos/bank-maluku-malut.ico",
+    "alt": "Logo Bank Maluku Malut",
+    "sourcePage": "https://www.bankmalukumalut.co.id/",
+    "assetUrl": "https://www.bankmalukumalut.co.id/favicon.ico"
+  },
+  "bank ntt": {
+    "src": "/h2hr-brand-logos/bank-ntt.png",
+    "alt": "Logo Bank NTT",
+    "sourcePage": "https://bpdntt.co.id/",
+    "assetUrl": "https://bpdntt.co.id/images/logo_ntt.png"
+  },
+  "bank nagari": {
+    "src": "/h2hr-brand-logos/bank-nagari.png",
+    "alt": "Logo Bank Nagari",
+    "sourcePage": "https://banknagari.co.id/",
+    "assetUrl": "https://banknagari.co.id/Assets/img/shortcut_logo.png"
+  },
+  "bank nobu": {
+    "src": "/h2hr-brand-logos/bank-nobu.png",
+    "alt": "Logo Bank Nobu",
+    "sourcePage": "https://www.nobubank.com/",
+    "assetUrl": "https://storage.googleapis.com/web-nobu-prod/images/Logo_Favicon_new.2e16d0ba.fill-180x180.png"
+  },
+  "bank papua": {
+    "src": "/h2hr-brand-logos/bank-papua.png",
+    "alt": "Logo Bank Papua",
+    "sourcePage": "https://www.bankpapua.co.id/",
+    "assetUrl": "https://www.bankpapua.co.id/asset/images/bp_ico.ico"
+  },
+  "bank raya (bri agro)": {
+    "src": "/h2hr-brand-logos/bank-raya--bri-agro.png",
+    "alt": "Logo Bank Raya (BRI Agro)",
+    "sourcePage": "https://bankraya.co.id/",
+    "assetUrl": "https://bankraya.co.id/img/favicon.png"
+  },
+  "bank resona perdania": {
+    "src": "/h2hr-brand-logos/bank-resona-perdania.png",
+    "alt": "Logo Bank Resona Perdania",
+    "sourcePage": "https://www.perdania.co.id/",
+    "assetUrl": "https://www.perdania.co.id/apple-touch-icon.png"
+  },
+  "bank riau kepri": {
+    "src": "/h2hr-brand-logos/bank-riau-kepri.png",
+    "alt": "Logo Bank Riau Kepri",
+    "sourcePage": "https://www.brksyariah.co.id/",
+    "assetUrl": "https://www.brksyariah.co.id/brkweb_syariah/images/favicon.png"
+  },
+  "bank sahabat sampoerna": {
+    "src": "/h2hr-brand-logos/bank-sahabat-sampoerna.png",
+    "alt": "Logo Bank Sahabat Sampoerna",
+    "sourcePage": "https://www.banksampoerna.com/",
+    "assetUrl": "https://www.banksampoerna.com/assets/images/fav/logo-1.png"
+  },
+  "bank sultra": {
+    "src": "/h2hr-brand-logos/bank-sultra.png",
+    "alt": "Logo Bank Sultra",
+    "sourcePage": "https://www.banksultra.co.id/",
+    "assetUrl": "https://banksultra.co.id/logo_bpd.png"
+  },
+  "bank sulut": {
+    "src": "/h2hr-brand-logos/bank-sulut.png",
+    "alt": "Logo Bank Sulut",
+    "sourcePage": "https://www.banksulutgo.co.id/",
+    "assetUrl": "https://www.banksulutgo.co.id/template/banksulut/images/apple-icon-114x114.png"
+  },
+  "bank sumsel babel": {
+    "src": "/h2hr-brand-logos/bank-sumsel-babel.ico",
+    "alt": "Logo Bank Sumsel Babel",
+    "sourcePage": "https://www.banksumselbabel.com/",
+    "assetUrl": "https://www.banksumselbabel.com/img/favicon.ico"
+  },
+  "bank sumut": {
+    "src": "/h2hr-brand-logos/bank-sumut.png",
+    "alt": "Logo Bank Sumut",
+    "sourcePage": "https://www.banksumut.co.id/",
+    "assetUrl": "https://www.banksumut.co.id/wp-content/uploads/2019/01/cropped-icon-bank-e1547451044630-180x180.png"
+  },
+  "bank victoria": {
+    "src": "/h2hr-brand-logos/bank-victoria.jpg",
+    "alt": "Logo Bank Victoria",
+    "sourcePage": "https://www.victoriabank.co.id/",
+    "assetUrl": "https://victoriabank.co.id//images/icon.jpg"
+  },
+  "bpd bali": {
+    "src": "/h2hr-brand-logos/bpd-bali.png",
+    "alt": "Logo BPD Bali",
+    "sourcePage": "https://www.bpdbali.co.id/",
+    "assetUrl": "https://www.bpdbali.co.id//public/images/icon.png"
+  },
+  "hibank": {
+    "src": "/h2hr-brand-logos/hibank.ico",
+    "alt": "Logo Hibank",
+    "sourcePage": "https://www.hibank.co.id/",
+    "assetUrl": "https://www.hibank.co.id/favicon.ico"
+  },
+  "arena of valor": {
+    "src": "/h2hr-brand-logos/arena-of-valor.ico",
+    "alt": "Logo ARENA OF VALOR",
+    "sourcePage": "https://aov.garena.co.id/",
+    "assetUrl": "https://cdngarenanow-a.akamaihd.net/gstaticid/favicon/favicon-aov.ico"
+  },
+  "delta force - garena": {
+    "src": "/h2hr-brand-logos/delta-force---garena.ico",
+    "alt": "Logo DELTA FORCE - GARENA",
+    "sourcePage": "https://deltaforce.garena.com/",
+    "assetUrl": "https://web.df.garena.com/02_h5/240923_official_website/favicon.ico"
+  },
+  "delta force - steam": {
+    "src": "/h2hr-brand-logos/delta-force---steam.ico",
+    "alt": "Logo DELTA FORCE - STEAM",
+    "sourcePage": "https://www.playdeltaforce.com/",
+    "assetUrl": "https://web.df.garena.com/02_h5/240923_official_website/favicon.ico"
+  },
+  "racing master": {
+    "src": "/h2hr-brand-logos/racing-master.ico",
+    "alt": "Logo RACING MASTER",
+    "sourcePage": "https://www.racingmaster.game/",
+    "assetUrl": "https://www.racingmaster.game/favicon.ico"
+  },
+  "undawn": {
+    "src": "/h2hr-brand-logos/undawn.png",
+    "alt": "Logo UNDAWN",
+    "sourcePage": "https://ud.garena.com/",
+    "assetUrl": "https://dl.undawntw.cdn.garenanow.com/H5/footer/favicon.ico"
+  },
+  "farlight 84": {
+    "src": "/h2hr-brand-logos/farlight-84.ico",
+    "alt": "Logo FARLIGHT 84",
+    "sourcePage": "https://farlight84.farlightgames.com/",
+    "assetUrl": "https://lilithimage.lilithcdn.com/allgames-official-web/farlight84/en/mobile/favicon.ico"
+  },
+  "age of empires mobile": {
+    "src": "/h2hr-brand-logos/age-of-empires-mobile.ico",
+    "alt": "Logo AGE OF EMPIRES MOBILE",
+    "sourcePage": "https://www.aoemobile.com/",
+    "assetUrl": "https://www.aoemobile.com/favicon.ico"
+  },
+  "onmyoji arena": {
+    "src": "/h2hr-brand-logos/onmyoji-arena.ico",
+    "alt": "Logo ONMYOJI ARENA",
+    "sourcePage": "https://www.onmyojiarena.us/",
+    "assetUrl": "https://www.onmyojiarena.us/favicon.ico"
+  },
+  "sausage man": {
+    "src": "/h2hr-brand-logos/sausage-man.ico",
+    "alt": "Logo SAUSAGE MAN",
+    "sourcePage": "https://sausageman.xd.com/",
+    "assetUrl": "https://sausageman.xd.com/favicon.ico"
+  },
+  "cimb niaga": {
+    "src": "/h2hr-brand-logos/cimb-niaga.ico",
+    "alt": "Logo CIMB Niaga",
+    "sourcePage": "https://www.cimbniaga.co.id/",
+    "assetUrl": "https://www.cimbniaga.co.id/etc/designs/cimb/clientlib-site/img/cimb-favicon.ico"
+  },
+  "uob": {
+    "src": "/h2hr-brand-logos/uob.ico",
+    "alt": "Logo UOB",
+    "sourcePage": "https://www.uob.co.id/",
+    "assetUrl": "https://www.uob.co.id/favicon.ico"
+  },
+  "growtopia": {
+    "src": "/h2hr-brand-logos/growtopia.ico",
+    "alt": "Logo GROWTOPIA",
+    "sourcePage": "https://www.growtopiagame.com/",
+    "assetUrl": "https://s3.eu-west-1.amazonaws.com/cdn.growtopiagame.com/website/resources/assets/images/growtopia.ico"
+  },
+  "lords mobile": {
+    "src": "/h2hr-brand-logos/lords-mobile.ico",
+    "alt": "Logo LORDS MOBILE",
+    "sourcePage": "https://lordsmobile.igg.com/",
+    "assetUrl": "https://lordsmobile.igg.com/favicon.ico"
+  },
+  "bank kalbar": {
+    "src": "/h2hr-brand-logos/bank-kalbar.ico",
+    "alt": "Logo Bank Kalbar",
+    "sourcePage": "https://bankkalbar.co.id/",
+    "assetUrl": "https://bankkalbar.co.id/favicon.ico"
+  },
+  "bank qnb": {
+    "src": "/h2hr-brand-logos/bank-qnb.ico",
+    "alt": "Logo Bank QNB",
+    "sourcePage": "https://www.qnb.co.id/",
+    "assetUrl": "https://www.qnb.co.id/site/default/master/_/asset/id.co.qnb:00000198819655d0/img/finansbank.gif"
+  },
+  "state of survival": {
+    "src": "/h2hr-brand-logos/state-of-survival.ico",
+    "alt": "Logo STATE OF SURVIVAL",
+    "sourcePage": "https://sos.kingsgroupgames.com/",
+    "assetUrl": "https://stateofsurvival.game:443/favicon.ico"
+  },
+  "lineage2m": {
+    "src": "/h2hr-brand-logos/lineage2m.ico",
+    "alt": "Logo LINEAGE2M",
+    "sourcePage": "https://lineage2m.plaync.com/",
+    "assetUrl": "https://assets.playnccdn.com/common/lineage2m.ico"
+  },
+  "super sus": {
+    "src": "/h2hr-brand-logos/super-sus.ico",
+    "alt": "Logo SUPER SUS",
+    "sourcePage": "https://www.supersus.io/",
+    "assetUrl": "https://www.supersus.io/favicon.ico"
+  },
+  "centrin": {
+    "src": "/h2hr-brand-logos/centrin.ico",
+    "alt": "Logo Centrin",
+    "sourcePage": "https://www.centrin.net.id/",
+    "assetUrl": "https://www.centrin.net.id/centrin/assets/images/favicon.ico"
+  },
+  "comet internet": {
+    "src": "/h2hr-brand-logos/comet-internet.png",
+    "alt": "Logo Comet Internet",
+    "sourcePage": "https://www.comet.net.id/",
+    "assetUrl": "https://comet.net.id/images/mark.png"
+  },
+  "citibank": {
+    "src": "/h2hr-brand-logos/citibank.png",
+    "alt": "Logo Citibank",
+    "sourcePage": "https://www.citibank.co.id/",
+    "assetUrl": "https://www.citigroup.com/global/citigroup-ui/akpublic/images/gpa_favicon.ico"
+  },
+  "btpn": {
+    "src": "/h2hr-brand-logos/btpn.ico",
+    "alt": "Logo BTPN",
+    "sourcePage": "https://www.smbci.com/",
+    "assetUrl": "https://www.smbci.com/static/img/favicon.ico"
+  },
+  "bukopin": {
+    "src": "/h2hr-brand-logos/bukopin.png",
+    "alt": "Logo Bukopin",
+    "sourcePage": "https://www.kbbank.co.id/",
+    "assetUrl": "https://www.kbbank.co.id/favicon.ico"
+  },
+  "motionpay": {
+    "src": "/h2hr-brand-logos/motionpay.png",
+    "alt": "Logo MotionPay",
+    "sourcePage": "https://www.motionpay.id/",
+    "assetUrl": "https://storage.googleapis.com/motion-web/navbar_logo/sw1taiDvnl4CDboj4THHobdDI.png"
+  },
+  "cbn": {
+    "src": "/h2hr-brand-logos/cbn.png",
+    "alt": "Logo CBN",
+    "sourcePage": "https://www.cbn.id/",
+    "assetUrl": "https://storage.cybiteam.id/assets.cbn.id/CBN_logo_mobile_1_924aa593b8.png"
+  },
+  "neo commerce": {
+    "src": "/h2hr-brand-logos/neo-commerce.png",
+    "alt": "Logo Neo Commerce",
+    "sourcePage": "https://www.bankneocommerce.co.id/",
+    "assetUrl": "https://www-cms.bankneo.co.id/storage/photos/1/logo/logo_bnc.png"
+  },
+  "bank banten": {
+    "src": "/h2hr-brand-logos/bank-banten.png",
+    "alt": "Logo Bank Banten",
+    "sourcePage": "https://www.bankbanten.co.id/",
+    "assetUrl": "https://www.bankbanten.co.id/assets/uploads/2026/08/1_LOGO-Baru-Bank-Banten_2026.png"
+  },
+  "bank ntb": {
+    "src": "/h2hr-brand-logos/bank-ntb.ico",
+    "alt": "Logo Bank NTB",
+    "sourcePage": "https://www.bankntbsyariah.co.id/",
+    "assetUrl": "https://www.bankntbsyariah.co.id/assets/img/favicon.ico"
+  },
+  "sakuku": {
+    "src": "/h2hr-brand-logos/sakuku.jpg",
+    "alt": "Logo Sakuku",
+    "sourcePage": "https://apps.apple.com/id/app/sakuku/id965131157",
+    "assetUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/03/e6/c4/03e6c489-0237-16fe-489a-78e6bcb94b55/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg"
+  }
+}

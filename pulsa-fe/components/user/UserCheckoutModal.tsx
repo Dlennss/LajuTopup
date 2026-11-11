@@ -144,7 +144,7 @@ function getSummaryPrimaryLabel(product: UserProductItem) {
 function shouldShowSummaryPrimaryRow(product: UserProductItem) {
   const category = String(product.kategori_nama || "").toUpperCase();
   const upperName = String(product.nama || "").toUpperCase();
-  return !category.includes("E-MONEY") && !category.includes("PAKET DATA") && !category.includes("GAME") && !(category.includes("LISTRIK") && upperName.includes("TOKEN LISTRIK"));
+  return !category.includes("E-MONEY") && !category.includes("E-WALLET") && !category.includes("PAKET DATA") && !category.includes("GAME") && !(category.includes("LISTRIK") && upperName.includes("TOKEN LISTRIK"));
 }
 
 function getBillingDetailConfig(product: UserProductItem | null) {
@@ -427,7 +427,7 @@ export function UserCheckoutModal({
   const totalBayar = hargaSebelumFeeAdmin;
   const ewalletProduct = isEwalletProduct(product);
   const ewalletNominal = ewalletProduct ? Math.max(0, isFixed ? Number(product?.nominal || 0) : nominalValue) : 0;
-  const ewalletServiceFee = ewalletProduct ? Math.max(0, totalBayar - ewalletNominal) : 0;
+  const ewalletServiceFee = ewalletProduct ? (isFixed ? Math.max(0, totalBayar - ewalletNominal) : baseCharge + feeActive) : 0;
   const billingDisplayTotalTagihan = billingBillAmount > 0 ? billingBillAmount : billingTotalAmount;
   const billingDisplayAdminFee = billingTotalAmount > 0
     ? Math.max(totalBayar - billingDisplayTotalTagihan, 0)
@@ -1189,12 +1189,12 @@ export function UserCheckoutModal({
                 <>
                   <div className="mt-2 flex items-center justify-between gap-3">
                     <span>Nominal masuk ke {product.brand_nama || "e-wallet"}</span>
-                    <span className="font-semibold text-slate-900">{formatRupiah(ewalletNominal)}</span>
+                    <span className="font-semibold text-slate-900">{isFixed && !product.nominal ? "Sesuai produk" : formatRupiah(ewalletNominal)}</span>
                   </div>
-                  <div className="mt-2 flex items-center justify-between gap-3">
+                  {!isFixed || product.nominal ? <div className="mt-2 flex items-center justify-between gap-3">
                     <span>Biaya layanan</span>
                     <span className="font-semibold text-slate-900">{formatRupiah(ewalletServiceFee)}</span>
-                  </div>
+                  </div> : null}
                 </>
               ) : (
                 <div className="mt-2 flex items-center justify-between gap-3">

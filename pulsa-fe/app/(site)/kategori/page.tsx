@@ -1,74 +1,19 @@
-import type { Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/nextauth";
-import { getCategories } from "@/lib/api.products";
-import type { UserCategoryItem, UserSession } from "@/components/user/types";
+import { getAppServerSession } from "@/lib/server-auth";
 import { GuestBottomNav } from "@/components/guest/GuestBottomNav";
+import { H2HRCatalogBrands } from "@/components/shared/H2HRCatalogBrands";
 import { ServiceDirectory } from "@/components/shared/ServiceDirectory";
-import { buildBreadcrumbJsonLd, buildCollectionJsonLd, buildPageMetadata } from "@/lib/site-search";
-import { UserUniversalServicePageContent } from "@/components/user/UserUniversalServicePageContent";
-import { UserTransferBankPageContent } from "@/components/user/UserTransferBankPageContent";
+import { getCategories } from "@/lib/api.products";
+import type { UserCategoryItem } from "@/components/user/types";
 
-type SessionShape = {
-  user?: UserSession;
-  backendToken?: string;
-};
 
-type PageProps = {
-  searchParams?: Promise<{ layanan?: string }>;
-};
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Semua Kategori Produk | LajuTopup",
-  description: "Lihat semua kategori produk LajuTopup, mulai dari pulsa, paket data, e-wallet, game, sampai tagihan.",
-  path: "/kategori",
-  keywords: ["kategori produk pulsakilat", "semua produk", "pulsakilat"],
-});
-
-export default async function GuestKategoriPage({ searchParams }: PageProps) {
-  const session = (await getServerSession(authOptions)) as SessionShape | null;
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const serviceSlug = String(resolvedSearchParams?.layanan || "").trim().toLowerCase();
-
-  if (serviceSlug === "transfer-bank") {
-    return (
-      <main className="min-h-screen bg-[#faf6f4] pb-24">
-        <UserTransferBankPageContent backHref="/kategori" />
-        <GuestBottomNav isLoggedIn={!!session?.backendToken} />
-      </main>
-    );
-  }
-
-  if (serviceSlug) {
-    return (
-      <>
-        <UserUniversalServicePageContent serviceSlug={serviceSlug} />
-        <GuestBottomNav isLoggedIn={!!session?.backendToken} />
-      </>
-    );
-  }
-
-  const categories = (await getCategories()) as UserCategoryItem[];
-  const collectionJsonLd = buildCollectionJsonLd({
-    title: "Semua Kategori Produk | LajuTopup",
-    description: "Lihat semua kategori produk LajuTopup, mulai dari pulsa, paket data, e-wallet, game, sampai tagihan.",
-    path: "/kategori",
-    itemNames: categories.map((category) => category.nama),
-  });
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "Beranda", path: "/" },
-    { name: "Kategori", path: "/kategori" },
-  ]);
-
-  return (
-    <main className="bg-sky-50">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      <div className="space-y-4 px-4 pt-4">
-        <ServiceDirectory mode="guest" />
-      </div>
-
-      <GuestBottomNav isLoggedIn={!!session?.backendToken} />
-    </main>
-  );
+export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ layanan?: string }> }) {
+  const session = await getAppServerSession();
+  const token = (session as { backendToken?: string } | null)?.backendToken;
+  const key = (await searchParams).layanan;
+  return <main className="min-h-screen bg-zinc-50">
+    {key ? <H2HRCatalogBrands categoryKey={key} mode="guest" /> : <div className="px-4 py-4"><ServiceDirectory categories={await getCategories() as UserCategoryItem[]} mode="guest" /></div>}
+    <GuestBottomNav isLoggedIn={!!token} />
+  </main>;
 }

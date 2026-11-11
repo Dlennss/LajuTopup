@@ -98,6 +98,9 @@ func (s *AppOrderService) Create(ctx context.Context, in repository.AppOrderCrea
 	if err != nil {
 		return nil, err
 	}
+	if requiresH2HRBillingInquiry(produk) && !isCheckProduct && billingAmount <= 0 {
+		return nil, fmt.Errorf("cek tagihan diperlukan; biaya layanan bukan total tagihan")
+	}
 	var nominal int64
 	var qtyFinal int64
 	if billingAmount > 0 {

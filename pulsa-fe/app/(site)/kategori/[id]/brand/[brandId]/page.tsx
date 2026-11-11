@@ -10,6 +10,8 @@ import { GuestPulsaQuickOrder } from "@/components/guest/GuestPulsaQuickOrder";
 import { GuestPaketDataQuickOrder } from "@/components/guest/GuestPaketDataQuickOrder";
 import { EMoneyBrandFlow } from "@/components/shared/EMoneyBrandFlow";
 import { RetailBillingEntryFlow } from "@/components/shared/RetailBillingEntryFlow";
+import { isH2HRBillingCategory } from "@/lib/h2hr-categories";
+import { UserProductGrid } from "@/components/user/UserProductGrid";
 import { getRichProductImageUrl } from "@/lib/product-rich-images";
 import { buildBreadcrumbJsonLd, buildCollectionJsonLd, buildPageMetadata, buildProductItemListJsonLd } from "@/lib/site-search";
 
@@ -67,7 +69,7 @@ export default async function GuestBrandProductsPage({ params }: PageProps) {
     { name: brand, path: `/kategori/${id}/brand/${brandId}` },
   ]);
   const isDataCategory = String(categoryName).toUpperCase().includes("DATA");
-  const isBillingCategory = ["3", "7", "11", "17", "18", "20"].includes(String(id));
+  const isBillingCategory = isH2HRBillingCategory(categoryName);
   const billingPlaceholder = id === "11"
     ? "Masukkan ID pelanggan / nomor meter"
     : id === "17"
@@ -92,7 +94,7 @@ export default async function GuestBrandProductsPage({ params }: PageProps) {
             <div className="grid min-h-40 place-items-center rounded-3xl border border-dashed border-slate-200 bg-white px-4 text-center text-sm text-slate-500 shadow-[0_8px_22px_rgba(15,23,42,0.13)]">
               Belum ada produk aktif untuk brand ini.
             </div>
-          ) : id === "1" ? (
+          ) : categoryName.toUpperCase() === "PULSA" ? (
             <GuestPulsaQuickOrder
               kategoriId={id}
               brands={[{ id: Number(brandId), nama: brand, aktif: true }]}
@@ -100,8 +102,8 @@ export default async function GuestBrandProductsPage({ params }: PageProps) {
               buyerRole={buyerRole}
               forcedBrand={{ id: Number(brandId), nama: brand, aktif: true }}
             />
-          ) : id === "19" && brandId === "171" ? (
-            <BPJSBrandFlow items={products} authToken={backendToken} buyerRole={buyerRole} />
+          ) : categoryName.toUpperCase() === "BPJS" ? (
+            <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           ) : isDataCategory ? (
             <GuestPaketDataQuickOrder
               kategoriId={String(id)}
@@ -110,20 +112,12 @@ export default async function GuestBrandProductsPage({ params }: PageProps) {
               buyerRole={buyerRole}
               forcedBrand={{ id: Number(brandId), nama: brand, aktif: true }}
             />
-          ) : id === "2" ? (
+          ) : /E-WALLET|E-MONEY/i.test(categoryName) ? (
             <EMoneyBrandFlow items={products} isLoggedIn={isLoggedIn} authToken={backendToken} mode={isLoggedIn ? "user" : "guest"} buyerRole={buyerRole} />
           ) : isBillingCategory ? (
-            <RetailBillingEntryFlow
-              title={categoryName || brand}
-              description={billingDescription}
-              placeholder={billingPlaceholder}
-              items={products}
-              mode={isLoggedIn ? "user" : "guest"}
-              authToken={backendToken}
-              buyerRole={buyerRole}
-            />
+            <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           ) : (
-            <GuestProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
+            <UserProductGrid items={products} isLoggedIn={isLoggedIn} authToken={backendToken} buyerRole={buyerRole} />
           )}
         </section>
       </div>

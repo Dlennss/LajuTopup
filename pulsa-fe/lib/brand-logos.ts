@@ -1,3 +1,5 @@
+import officialLogos from "@/lib/h2hr-official-logos.json";
+
 export type BrandLogoMeta = {
   src: string;
   alt: string;
@@ -336,9 +338,9 @@ const BRAND_LOGOS: Record<string, BrandLogoMeta> = {
     sourcePage: "local:/public/images/games/banner_magic_chess.jpg",
   },
   "free fire max": {
-    src: "/images/games/banner_freefire_max.svg",
+    src: "/images/games/banner_freefire.png",
     alt: "Free Fire MAX Top-up",
-    sourcePage: "local:/public/images/games/banner_freefire_max.svg",
+    sourcePage: "https://ff.garena.com/",
   },
   "call of duty mobile": {
     src: "/images/games/codm_logo.png",
@@ -390,5 +392,28 @@ function normalizeBrandName(name: string) {
 export function getBrandLogo(name: string): BrandLogoMeta | null {
   const key = normalizeBrandName(name);
   const withoutBankPrefix = key.replace(/^bank\s+/, "");
-  return BRAND_LOGOS[key] ?? BRAND_LOGOS[withoutBankPrefix] ?? null;
+  const official = officialLogos as Record<string, BrandLogoMeta>;
+  const aliases: Record<string, string> = {
+    "mobile legend br": "mobile legend", "mobile legend ph": "mobile legend",
+    "magic chess : go go": "magic chess go go", "roblox idr": "roblox",
+    "point blank cash": "point blank", "indosat data freedom": "indosat",
+    "indosat data harian": "indosat", "shopee food driver": "shopee",
+    "xl/axis": "xl", "sea bank": "seabank", "bank jago": "jago",
+  };
+  const resolved = aliases[key] ?? key;
+  const fromSite = official[name.trim().toLowerCase()] ?? official[resolved];
+  if (fromSite) return fromSite;
+  const existing = BRAND_LOGOS[resolved] ?? BRAND_LOGOS[withoutBankPrefix];
+  if (existing && !/banner_(hago|zepeto|blood_strike)\.svg/.test(existing.src)) return existing;
+  const local: Record<string, [string, string]> = {
+    grab: ["/yuscom-family-logos/grab.svg", "https://www.grab.com/id/"],
+    kaspro: ["/yuscom-display-brand-logos/kaspro.png", "https://kaspro.id/"],
+    maxim: ["/yuscom-display-brand-logos/maxim.ico", "https://id.taximaxim.com/"],
+    myrepublic: ["/yuscom-display-brand-logos/myrepublic.ico", "https://www.myrepublic.co.id/"],
+    "mnc play": ["/yuscom-display-brand-logos/mncplay.png", "https://mncplay.id/"],
+    telkom: ["/yuscom-family-logos/telkom.svg", "https://www.telkom.co.id/"],
+    gas: ["/images/gas/Logo_PGN.png", "https://www.pgn.co.id/"],
+  };
+  const asset = local[key];
+  return asset ? { src: asset[0], alt: `Logo ${name}`, sourcePage: asset[1] } : null;
 }

@@ -38,7 +38,7 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test ./internal/service ./internal/helper ./internal/provider ./internal/repository
+        run: go test ./internal/service ./internal/helper ./internal/provider ./internal/repository ./scripts/pulsa24jam_catalog_from_dashboard
 
       - name: Build backend
         run: go build -o /tmp/lajutopup-api .

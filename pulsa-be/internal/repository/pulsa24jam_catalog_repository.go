@@ -34,14 +34,17 @@ func (r *Pulsa24JamCatalogRepository) Sync(ctx context.Context, items []Pulsa24J
 	if r == nil || r.db == nil {
 		return nil, fmt.Errorf("repository katalog Pulsa24Jam belum siap")
 	}
-	if len(items) == 0 {
-		return nil, fmt.Errorf("katalog Pulsa24Jam kosong; sinkronisasi dibatalkan")
+	if err := validatePulsa24JamCatalog(items); err != nil {
+		return nil, err
 	}
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 	defer tx.Rollback()
+	if _, err := tx.ExecContext(ctx, `SELECT pg_advisory_xact_lock(2409202601)`); err != nil {
+		return nil, err
+	}
 
 	if _, err := tx.ExecContext(ctx, `
 INSERT INTO public.provider (nama, aktif, dibuat_pada, diubah_pada)
@@ -50,19 +53,16 @@ ON CONFLICT (nama) DO UPDATE SET aktif = true, diubah_pada = now()
 `); err != nil {
 		return nil, err
 	}
-	if _, err := tx.ExecContext(ctx, `UPDATE public.produk_app_pricing SET aktif = false, updated_at = now() WHERE LOWER(TRIM(provider)) = 'pulsa24jam'`); err != nil {
+	if _, err := tx.ExecContext(ctx, `UPDATE public.produk_app_pricing SET aktif = false, updated_at = now() WHERE aktif = true`); err != nil {
 		return nil, err
 	}
-	if _, err := tx.ExecContext(ctx, `UPDATE public.produk_provider_map SET aktif = false, diubah_pada = now() WHERE LOWER(TRIM(provider)) = 'pulsa24jam'`); err != nil {
+	if _, err := tx.ExecContext(ctx, `UPDATE public.produk_provider_map SET aktif = false, diubah_pada = now() WHERE aktif = true`); err != nil {
 		return nil, err
 	}
 
 	synced := 0
 	for _, raw := range items {
 		item := normalizePulsa24JamCatalogItem(raw)
-		if item.SKU == "" || item.Name == "" {
-			continue
-		}
 		categoryID, err := ensureCatalogMaster(ctx, tx, "kategori", item.CategoryName)
 		if err != nil {
 			return nil, err
@@ -91,6 +91,7 @@ ON CONFLICT (sku) DO UPDATE SET
   kategori_id = EXCLUDED.kategori_id,
   brand_id = EXCLUDED.brand_id,
   tipe_harga = EXCLUDED.tipe_harga,
+  nominal = NULL,
   maksimal_nominal = EXCLUDED.maksimal_nominal,
   aktif = true,
   diubah_pada = now()
@@ -145,6 +146,12 @@ ON CONFLICT (produk_id, provider, kode_provider) DO UPDATE SET
 	if synced == 0 {
 		return nil, fmt.Errorf("tidak ada produk Pulsa24Jam valid; sinkronisasi dibatalkan")
 	}
+	if _, err := tx.ExecContext(ctx, `UPDATE public.produk p SET aktif = false, diubah_pada = now()
+WHERE p.aktif = true AND NOT EXISTS (
+ SELECT 1 FROM public.produk_app_pricing a WHERE a.produk_id = p.id AND a.aktif = true AND a.provider = 'pulsa24jam'
+)`); err != nil {
+		return nil, err
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
@@ -158,19 +165,31 @@ func normalizePulsa24JamCatalogItem(item Pulsa24JamCatalogItem) Pulsa24JamCatalo
 	item.CategoryName = strings.TrimSpace(item.CategoryName)
 	item.BrandName = strings.TrimSpace(item.BrandName)
 	item.PriceType = strings.ToUpper(strings.TrimSpace(item.PriceType))
-	if item.GroupName == "" {
-		item.GroupName = "Pulsa24Jam"
-	}
-	if item.CategoryName == "" {
-		item.CategoryName = "Lainnya"
-	}
-	if item.BrandName == "" {
-		item.BrandName = "Pulsa24Jam"
-	}
-	if item.PriceType != "OPEN_AMOUNT" {
-		item.PriceType = "FIXED"
-	}
 	return item
+}
+
+func validatePulsa24JamCatalog(items []Pulsa24JamCatalogItem) error {
+	if len(items) == 0 {
+		return fmt.Errorf("katalog Pulsa24Jam kosong; sinkronisasi dibatalkan")
+	}
+	seen := make(map[string]bool, len(items))
+	for _, raw := range items {
+		p := normalizePulsa24JamCatalogItem(raw)
+		if p.SKU == "" || p.Name == "" || p.CategoryName == "" || p.BrandName == "" {
+			return fmt.Errorf("metadata katalog tidak lengkap untuk SKU %q", p.SKU)
+		}
+		if seen[p.SKU] {
+			return fmt.Errorf("SKU duplikat: %s", p.SKU)
+		}
+		seen[p.SKU] = true
+		if p.Price < 0 || (p.PriceType != "FIXED" && p.PriceType != "OPEN_AMOUNT") {
+			return fmt.Errorf("harga katalog tidak valid untuk SKU %s", p.SKU)
+		}
+		if p.MaximumNominal != nil && *p.MaximumNominal <= 0 {
+			return fmt.Errorf("batas nominal tidak valid untuk SKU %s", p.SKU)
+		}
+	}
+	return nil
 }
 
 func ensureCatalogMaster(ctx context.Context, tx *sql.Tx, table, name string) (int64, error) {
